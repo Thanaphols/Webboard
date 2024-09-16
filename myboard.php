@@ -24,7 +24,6 @@ $board['img']='';
     <div class="row">
         <div class="col-sm-4"></div>
         <div class="col-sm-4 text-center"><h5>บอร์ดทั้งหมดของคุณ <?php echo $data['firstName']; echo ' '; echo $data['lastName']; ?></h5>
-    
     </div>
         <div class="col-sm-4 text-end">
         <div class="dropdown">
@@ -40,17 +39,16 @@ $board['img']='';
         </div>
     </div>
         <div class="row  mt-2 mb-2">
-            
             <div class="col-sm-2"></div>
-
             <div class="col-sm-8 ">
                 <div class="row ">
                     <?php while ( $data = mysqli_fetch_assoc($boardResult) ) { 
                         $categorySql = 'SELECT categoryName FROM category WHERE categoryID = '.$data['categoryID'].' ';
                         $category = getData($categorySql);
+                        $commnet = countROW('comment','boardID',$data['boardID']);
                         ?>
                     <div class="col-sm-6 border mb-2">
-                        <?php if(isset($board['img'])) { ?>
+                        <?php if(isset($board['img'])==null) { ?>
                         <div class="row">
                             <div class="col-sm-4">
                             <img src="img/noimg.jpg" class="img-fluid mt-2 mb-2" alt="...">
@@ -66,27 +64,54 @@ $board['img']='';
                                     <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/>
                                     </svg> 
                                     <?php echo $data['boardDate']; ?>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16">
+                                        <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/>
+                                        <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"/>
+                                    </svg>
+                                    <?php echo $data['boardTime']; ?>
                                 </p></div>
+                                <div class="col-sm-2"></div>
+                                    <div class="col-sm-5 mt-4 text-end">
+                                <p>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chat-left-text" viewBox="0 0 16 16">
+                                        <path d="M14 1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4.414A2 2 0 0 0 3 11.586l-2 2V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12.793a.5.5 0 0 0 .854.353l2.853-2.853A1 1 0 0 1 4.414 12H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"/>
+                                        <path d="M3 3.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5M3 6a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9A.5.5 0 0 1 3 6m0 2.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5"/>
+                                    </svg> Comment <?php echo $commnet; ?>
+                                </p></div>
+                                </div>
+                            </div>
+                        </div>
+                        <?php } else { ?>
+                            <div class="row">
+                            <div class="col-sm-12">
+                            <h5 class="text-start mt-2 mb-1"><?php echo $data['boardHeader'] ?></h5>
+                                <p class="text-start mb-1">Category : <?php echo $category['categoryName']; ?></p>
+                                <p></p>
+                                <div class="row">
+                                    <div class="col-sm-5"><p>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar-check" viewBox="0 0 16 16">
+                                    <path d="M10.854 7.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 9.793l2.646-2.647a.5.5 0 0 1 .708 0"/>
+                                    <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/>
+                                    </svg> 
+                                    <?php echo $data['boardDate']; ?>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16">
+                                        <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/>
+                                        <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"/>
+                                    </svg>
+                                    <?php echo $data['boardTime']; ?>
+                                </p>
+                                
+                                </div>
                                 <div class="col sm-2"></div>
                                     <div class="col-sm-5 text-end">
                                 <p>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chat-left-text" viewBox="0 0 16 16">
                                     <path d="M14 1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4.414A2 2 0 0 0 3 11.586l-2 2V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12.793a.5.5 0 0 0 .854.353l2.853-2.853A1 1 0 0 1 4.414 12H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"/>
                                     <path d="M3 3.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5M3 6a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9A.5.5 0 0 1 3 6m0 2.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5"/>
-                                </svg> Comment 0
-                                </p></div>
+                                </svg> Comment <?php echo $commnet; ?>
+                                </p>
                                 </div>
-                                
-                            </div>
-                        </div>
-                        <?php } else { ?>
-                            <div class="row">
-                            <div class="col-sm-12">
-                                
-                                <h5 class="text-start mt-2 mb-1"><?php echo $data['boardHeader'] ?></h5>
-                                <p class="text-start mb-1">Category</p>
-                                <p class="text-start mb-1">Date Create</p>
-                                <p class="text-end">Comment 0</p>
+                                </div>
                             </div>
                         </div>
                             <?php }  ?>
@@ -96,7 +121,6 @@ $board['img']='';
                 </div> 
             </div>
             
-                    
             <div class="col-lg-2"></div> 
            
         </div>
