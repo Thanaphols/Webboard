@@ -12,101 +12,63 @@
     <?php 
             require 'db/db_connect.php';
             connect();
-            $sql2 = 'SELECT board.boardHeader, board.boardBody,board.userID AS userBoardID, board.categoryID,board.boardDate,board.boardTime ,
+            $boardSql = 'SELECT board.boardHeader, board.boardBody,board.userID AS userBoardID, board.categoryID,board.boardDate,board.boardTime ,
                     users.firstName AS userBoardFirstName , users.lastName AS userBoardLastName ,
                     category.categoryName 
                     FROM board INNER JOIN users ON users.userID = board.userID AND board.boardID = '.$_GET['boardID'].' 
                     INNER JOIN category  ON category.categoryID = board.categoryID  WHERE board.boardID = '.$_GET['boardID'].'' ;
-             $board = getData($sql2);
-            // $commentSQL = 'SELECT * FROM comment WHERE boardID = '.$baord['boardID'].' ';
-            //  print_r ($board);
-            // if(isset($_POST['categoryID'])) {
-            //         if($_POST['boardHeader']=='' || $_POST['boardBody']==''){
-            //             echo ' <script>
-            //             $(function() {
-            //                 Swal.fire({
-            //                     showCancelButton: true,
-            //                     showConfirmButton: false,
-            //                     cancelButtonText: "ปิด",
-            //                     title: "ไม่สามารถโพสต์ได้ !",
-            //                     text: "กรุณากรอกข้อมูลให้สมบูรณ์ !",
-            //                     icon: "error"
-            //                 });
-            //             });
-            //         </script>';
-            //         }else{
-            //             if($_FILES["boardImage"]["tmp_name"]!=''){
-                            
-            //                 // if(is_uploaded_file($_FILES['imgStat']['tmp_name'])){
-            //                 //     if(($_FILES['imgStat']['type']=='image/jpeg') OR
-            //                 //        ($_FILES['imgStat']['type']=='image/jpeg')){
-            //                 //    move_uploaded_file($_FILES['imgStat']['tmp_name'],
-            //                 //            'img/stat_img/'.$_FILES['imgStat']['name']);
-            //                 //    $SQL = 'INSERT INTO statuses (o_id,stat_text,stat_img,stat_date,f_id)'
-            //                 //            . ' VALUES ("'.$_SESSION['user_id'].'","'.$txt.'",'
-            //                 //            . ' "img/stat_img/'.$_FILES['imgStat']['name'].'","'.$stat_date.'","'.$_SESSION['user_id'].'" ) ';
-            //                 //     } 
-            //                 // }else{
-            //                 //     $SQL = 'INSERT INTO statuses (o_id,stat_text,stat_date,f_id)'
-            //                 //             . ' VALUES ("'.$_SESSION['user_id'].'","'.$txt.'","'.$stat_date.'","'.$_SESSION['user_id'].'") ';
-            //                 // }
-            //             }else{
-            //                 if($_POST['categoryID'] != $board['categoryID']) {
-                                
-            //                 $updateBoardSQL = 'UPDATE board SET boardHeader = "'.$_POST['boardHeader'].'",
-            //                 boardBody = "'.$_POST['boardBody'].'", categoryID = "'.$_POST['categoryID'].'" WHERE boardID = '.$_GET['boardID'].' ';
-            //                 echo $updateBoardSQL;
-            //                 // $result2 = mysqli_query($GLOBALS['conn'],$updateBoardSQL);
-            //                 echo ' <script>
-            //                 $(function() {
-            //                     Swal.fire({
-            //                         showCancelButton: true,
-            //                         showConfirmButton: false,
-            //                         cancelButtonText: "ปิด",
-            //                         title: "แก้ไขบอร์ดสำเร็จ !",
-            //                         text: "กรุณารอสักครู่ !",
-            //                         icon: "success"
-            //                     });
-            //                 });
-            //                 </script>';
-            //              //  header ( 'refresh: 2; url = index.php ' );
-            //                 }else{
-            //                     $updateBoardSQL = 'UPDATE board SET boardHeader = "'.$_POST['boardHeader'].'",
-            //                     boardBody = "'.$_POST['boardBody'].'"  WHERE boardID = '.$_GET['boardID'].' ';
-            //                     $result2 = mysqli_query($GLOBALS['conn'],$updateBoardSQL);
-            //                     echo ' <script>
-            //                     $(function() {
-            //                         Swal.fire({
-            //                             showCancelButton: true,
-            //                             showConfirmButton: false,
-            //                             cancelButtonText: "ปิด",
-            //                             title: "แก้ไขบอร์ดสำเร็จ !",
-            //                             text: "กรุณารอสักครู่ !",
-            //                             icon: "success"
-            //                         });
-            //                     });
-            //                     </script>';
-            //                  //  header ( 'refresh: 2; url = index.php ' );
-            //                 }
-            //             }
-            //         }
-            // }
-            if(isset($_POST['commnetDetail'])) {
-                echo 'comment';
+             $board = getData($boardSql);
+             $comment = countRow('comment','boardID',$_GET['boardID']);
+            
+            if(isset($_POST['commentDetail'])) {
+                if($_POST['commentDetail']=='') {
+                    echo ' <script>
+                            $(function() {
+                                Swal.fire({
+                                    showCancelButton: true,
+                                    showConfirmButton: false,
+                                    cancelButtonText: "ปิด",
+                                    title: "ไม่สามารถแสดงความคิดเห็นได้",
+                                    text: "ข้อความเป็นค่าว่าง กรุณากรอกข้อคิดเห็น !",
+                                    icon: "error"
+                                });
+                            });
+                            </script>';
+                }else{
+                    // INSERT Comment userID FROM $_SESSSINO['userID'] boardID FROM $_GET['boardID']
+                    $commnetSQL = 'INSERT INTO comment (userID,boardID,commentDetail,commentDate,commentTime) VALUES 
+                    ( '.$_SESSION['userID'].', '.$_GET['boardID'].',"'.$_POST['commentDetail'].'" , CURRENT_DATE  , CURRENT_TIME ) ';
+                   // echo $commnetSQL;
+                    $result = mysqli_query($GLOBALS['conn'],$commnetSQL);
+                    echo ' <script>
+                            $(function() {
+                                Swal.fire({
+                                    showCancelButton: true,
+                                    showConfirmButton: false,
+                                    cancelButtonText: "ปิด",
+                                    title: "แสดงความคิดเห็นสำเร็จ !",
+                                    text: "",
+                                    icon: "success"
+                                });
+                            });
+                            </script>';
+                }
             }
-
-
+            $getcommentSQL = 'SELECT * FROM comment WHERE boardID = '.$_GET['boardID'].' ';
+           
+            $resultComment = mysqli_query($GLOBALS['conn'],$getcommentSQL);
+           
     ?>
 </head>
 <body>
     <?php require 'req/navbar.php' ?>
     <div class="container-fluid mt-5 mb-2 ">
     <form method="post" enctype="multipart/form-data">
-        <div class="row mt-4 ">
+        <div class="row mt-4 mb-4 ">
             <div class="col-lg-3 "> 
             </div>
             <div class="col-lg-6">
-                <div class="card border ">
+                <div class="card border mb-4  shadow-lg ">
                     <div class="card-body">
                         <h5 class="card-title text-center ">บอร์ดหมายเลข <?php echo $_GET['boardID'] ?></h5>
                         <p class="card-text form-inline">
@@ -136,27 +98,50 @@
                         </p>
                     </div>
                 </div>
-                <?php  if(isset($_SESSION['userID'])) { ?>
-                <div class="card mt-2 ">
-                    <div class="card-body">
-                        <h5 class="card-title "> ความคิดเห็น</h5>
-                                <p class="card-text mb-1"> หมายเลขสมาชิก 123 : คุณ 123 456  </p>  
-                                <span classs="card-text" ><?php echo $board['boardDate'].' '.$board['boardTime']; ?> </span>      
-                                <p class="card-text">ความคิดเห็น  </p>             
+                <div class="row mt-3">
+                <div class="border"></div>
+                    <div class="col-sm-3"></div>
+                    <div class="col-sm-6 mt-2 mb-2">
+                    <span class> ความคิดเห็นทั้งหมด <?php echo $comment; ?></span>
+                    </div>
+                    <div class="col-sm-3"></div>
+                    <div class="border "></div>
+                </div>
+               
+                <div class="card mt-4 shadow-lg  ">
+                    <div class="card-body mb-2">
+                        
+                        <h5 class="card-title "> </h5>
+                                <?php $i=0; while($data = mysqli_fetch_assoc($resultComment)) { 
+                                    $i++; 
+                                    $userCommentSQL = 'SELECT firstName,lastName FROM users WHERE userID = '.$data['userID'].' ';
+                                    $userData = getData($userCommentSQL);
+                                    ?>
+                                    <label  class="col-sm-3 col-form-label">ความคิดเห็นที่  <?php echo $i;if(@$_SESSION['userID'] == $data['userID'] ) { ?>
+                                    <a href="editBoard.php?boardID=<?php echo $data['boardID']; ?>" class="btn btn-sm btn-outline-primary ">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                        <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                                        <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+                                        </svg>
+                                    </a>
+                                    <?php } ?> </label>           
                                 <div class="col-sm-12">
                                 <span disabled class="form-control" name="boardBody" id="boardBody" diabled  
-                                placeholder="Enter Board Body"><?php echo $board['boardBody']; ?></span>
+                                placeholder="Enter Board Body"><?php echo $data['commentDetail']; ?></span>
                                 </div> <br>
-                                <p class="border"></p>
-                                <p class="card-text mb-1">คุณ 123 456</p>  
-                                <p class="card-text">หมายเลขสมาชิก 123</p>       
+                                <p class="card-text mb-1"> หมายเลขสมาชิก :  <?php echo $data['userID']." คุณ ".$userData['firstName'].' '.$userData['lastName'];  ?>   </p>  
+                                <span classs="card-text" ><?php echo $data['commentDate'].' '.$data['commentTime']; ?> </span>  <br>   <br>  
+                                <p class="border"></p> 
+                                <?php } ?> 
+                                <?php  if(isset($_SESSION['userID'])) { ?>  
                                 <p class="card-text">แสดงความคิดเห็น  </p>             
-                                <textarea  class="form-control" name="commnetDetail" id="commnetDetail" aria-label="With textarea" 
+                                <textarea  class="form-control" name="commentDetail" id="commentDetail" aria-label="With textarea" 
                                 placeholder="Enter Board Body"></textarea>
                                 </div>
-                                <button type="submit" class="btn btn-primary -25"> commnet </button>
+                                <button type="submit" class="btn btn-primary -25"> แสดงความคิดเห็น </button>
+                                
                     </div>
-                </div>
+                 
                 <?php } ?>
             </div>
             <div class="col-lg-3"> </div>

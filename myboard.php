@@ -12,6 +12,7 @@ $board['img']='';
     $boardResult = mysqli_query($GLOBALS['conn'],$boardSql);
     $categorySQL = 'SELECT * FROM category';
     $result1 = mysqli_query($GLOBALS['conn'],$categorySQL);
+    $countMyBoard = countRow('board','userID',$_SESSION['userID']);
 ?>
     <meta charset="UTF-8">
     <link href="css/style.css" rel="stylesheet" type="text/css"/>
@@ -32,14 +33,15 @@ $board['img']='';
         <div class="row  mt-2 mb-2">
             <div class="col-sm-2"></div>
             <div class="col-sm-8 ">
-                <div class="row ">
+                <div class="row "> 
+                    <?php  if($countMyBoard > 0) {  ?>
                     <?php $i=0; while ( $data = mysqli_fetch_assoc($boardResult) ) { 
                         $i++;
                         $categorySql = 'SELECT categoryName FROM category WHERE categoryID = '.$data['categoryID'].' ';
                         $category = getData($categorySql);
                         $commnet = countROW('comment','boardID',$data['boardID']);
                         ?>
-                    <div class="col-sm-6 border mb-2">
+                    <div class="col-sm-6 border shadow-sm mb-2">
                         <?php if(isset($board['img'])==null) { ?>
                         <div class="row">
                             <div class="col-sm-4">
@@ -119,8 +121,11 @@ $board['img']='';
                             <?php }  ?>
                     </div>
                     
-                     <?php } ?>
-                    
+                     <?php } }else { ?>
+                    <div class="col-sm-4"></div>
+                    <div class="col-sm-4 text-center"><h5>คุณไม่มีบอร์ด</h5></div>
+                    <div class="col-sm-4"></div>
+                        <?php } ?>
                 </div> 
             </div>
             

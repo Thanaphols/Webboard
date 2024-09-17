@@ -32,7 +32,7 @@
 
             <div class="col-lg-4">
                 <div class="card ">
-                    <div class="card-body">
+                    <div class="card-body shadow-sm">
                         <h5 class="card-title text-center ">โปรไฟล์ของฉัน</h5>
                         <p class="card-text form-inline">
                             <div class="mb-3 row">

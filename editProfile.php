@@ -69,7 +69,7 @@
             <div class="col-lg-4">
                 <div class="card ">
                     <div class="card-body">
-                        <h5 class="card-title text-center ">โปรไฟล์ของฉัน</h5>
+                        <h5 class="card-title text-center shadow-sm ">โปรไฟล์ของฉัน</h5>
                         <p class="card-text form-inline">
                             <div class="mb-3 row">
                             <label for="email" class="col-sm-3  col-form-label text-while">user ID</label>

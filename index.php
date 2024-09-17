@@ -37,7 +37,7 @@ $board['img']='';
                         $commnet = countROW('comment','boardID',$data['boardID']);
                         //echo $commnet;
                         ?>
-                    <div class="col-sm-6 border mb-2">
+                    <div class="col-sm-6 border shadow-sm mb-2">
                         <?php if(!isset($data['img'])==null) { ?>
                         <div class="row">
                             <div class="col-sm-4">

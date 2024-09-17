@@ -61,7 +61,7 @@
                     
             <div class="col-lg-4">
            
-                <div class="card border-light ">
+                <div class="card border-light  shadow-lg ">
                     <div class="card-body">
                         <h5 class="card-title text-center ">เข้าสู่ระบบ</h5>
                         <p class="card-text form-inline">
