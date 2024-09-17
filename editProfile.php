@@ -12,15 +12,22 @@
     <?php 
             require 'db/db_connect.php';
             connect();
-            $sql = 'SELECT * FROM users WHERE userID = '.$_SESSION['userID'].' ';
-            $user = getData($sql);
-            $userID = $user['userID'];
-            $email = $user['email'];
-            $firstName = $user['firstName'];
-            $lastName = $user['lastName'];
-            $userDate = $user['userDate'];
-            $userTime = $user['userTime'];
-
+            $loginUserID = $_SESSION['userID'];
+            $DataUserLoginSql = 'SELECT * FROM users WHERE userID = ? ';
+            $prepareDataUserLogin = $GLOBALS['conn']->prepare($DataUserLoginSql); 
+            $prepareDataUserLogin->bind_param("i",$loginUserID);
+            $prepareDataUserLogin->execute();
+            $result = $prepareDataUserLogin->get_result();
+            if($result->num_rows > 0 ){
+                $user = $result->fetch_assoc();
+                $userID = $user['userID'];
+                $email = $user['email'];
+                $firstName = $user['firstName'];
+                $lastName = $user['lastName'];
+                $userDate = $user['userDate'];
+                $userTime = $user['userTime'];
+            }
+            
             if(isset($_POST['firstName']) || isset($_POST['lastName']) || isset($_POST['email']) ){
                
                 if($_POST['firstName']=='' || $_POST['lastName']==''){
@@ -37,9 +44,14 @@
                             });
                             </script>';
                 }else{
-                    $sql = 'UPDATE users SET firstName = "'.$_POST['firstName'].'" , lastName = "'.$_POST['lastName'].'" WHERE userID = '.$_SESSION['userID'].' ';
-                    $result = mysqli_query($GLOBALS['conn'], $sql);
-                    //echo $sql;
+                    $newfirstName = $_POST['firstName'];
+                    $newlastName = $_POST['lastName'];
+                    // $sql = 'UPDATE users SET firstName = "'.$_POST['firstName'].'" , lastName = "'.$_POST['lastName'].'" WHERE userID = '.$_SESSION['userID'].' ';
+                    // $result = mysqli_query($GLOBALS['conn'], $sql);
+                    $updateUserSQL = 'UPDATE users SET firstName = ? , lastName = ? WHERE userID = ?';
+                    $prepareUpdateUser = $GLOBALS['conn']->prepare($updateUserSQL);
+                    $prepareUpdateUser->bind_param("ssi",$newfirstName,$newlastName,$loginUserID);
+                    $result = $prepareUpdateUser->execute();
                     echo ' <script>
                             $(function() {
                                 Swal.fire({
@@ -53,8 +65,11 @@
                             });
                             </script>';
                             header('refresh:2 ; url=profile.php');
+                           $prepareUpdateUser->close();
                 }
             }
+            
+            $prepareDataUserLogin->close();
     ?>
 </head>
 <body>

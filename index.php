@@ -4,12 +4,13 @@
 <?php 
 require 'db/db_connect.php';
 connect();
-$board['img']='';
+    $board['img']='';
     $sql = 'SELECT users.userID, users.firstName , users.lastName ,
     board.boardID, board.boardHeader, board.boardBody , board.boardDate, board.boardTime ,
     category.categoryName 
-    FROM board INNER JOIN users ON users.userID = 1 
-    INNER JOIN category ON category.categoryID = 2 ';
+    FROM board INNER JOIN users ON users.userID = board.userID 
+    INNER JOIN category ON category.categoryID = board.categoryID ';
+    
     $boardResult = mysqli_query($GLOBALS['conn'],$sql);
 ?>
     <meta charset="UTF-8">

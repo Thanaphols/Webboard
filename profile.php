@@ -12,14 +12,21 @@
     <?php 
             require 'db/db_connect.php';
             connect();
-            $sql = 'SELECT * FROM users WHERE userID = '.$_SESSION['userID'].' ';
-            $user = getData($sql);
-            $userID = $user['userID'];
-            $email = $user['email'];
-            $firstName = $user['firstName'];
-            $lastName = $user['lastName'];
-            $userDate = $user['userDate'];
-            $userTime = $user['userTime'];
+            $loginUserID = $_SESSION['userID'];
+            $DataUserLoginSql = 'SELECT * FROM users WHERE userID = ? ';
+            $prepareDataUserLogin = $GLOBALS['conn']->prepare($DataUserLoginSql); 
+            $prepareDataUserLogin->bind_param("i",$loginUserID);
+            $prepareDataUserLogin->execute();
+            $result = $prepareDataUserLogin->get_result();
+            if($result->num_rows > 0 ){
+                $user = $result->fetch_assoc();
+                $userID = $user['userID'];
+                $email = $user['email'];
+                $firstName = $user['firstName'];
+                $lastName = $user['lastName'];
+                $userDate = $user['userDate'];
+                $userTime = $user['userTime'];
+            }
     ?>
 </head>
 <body>
@@ -70,9 +77,6 @@
                                 <span class="input-group-text"> <?php echo $userDate, ' ' , $userTime;  ?>1</span>
                                 </div>
                             </div>
-
-                            
-
                             <div class="row ">
                                 <div class="col-lg-2"></div>
                                 <div class="col-lg-8"> 

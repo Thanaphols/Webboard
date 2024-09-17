@@ -13,40 +13,48 @@
             require 'db/db_connect.php';
             connect();
                     if(isset($_POST['email'])){  
-                        $sql = 'SELECT * from users WHERE email = "'.$_POST['email'].'" AND userPassword = "'.$_POST['userPassword'].'" ';
-                        $userData = getData($sql);
-                        //echo $data;
-                         if ($userData == '') {
-                            echo ' <script>
-                            $(function() {
-                                Swal.fire({
-                                    showCancelButton: true,
-                                    showConfirmButton: false,
-                                    cancelButtonText: "ปิด",
-                                    title: "ไม่สามารถเข้าสู่ระบบได้",
-                                    text: "Email หรือ Password ผิดพลาด กรุณาลองใหม่อีกครั้ง !",
-                                    icon: "error"
-                                });
-                            });
-                            </script>';
-                         }else{
-                            $_SESSION['userID'] = $userData['userID'];
-                            //print_r($_SESSION);
-                            echo ' <script>
+                        $email = $_POST['email'];
+                        $password = md5($_POST['userPassword']);
+                        
+                        $sql = 'SELECT * from users WHERE email = ? AND userPassword = ? ';
+                        $prepareUser =  $GLOBALS['conn']->prepare($sql);
+                        $prepareUser->bind_param("ss",$email,$password);
+                        $prepareUser->execute();
+                        $result = $prepareUser->get_result();
+                        if($result->num_rows > 0) {
+                           $row = $result->fetch_assoc();
+                                $_SESSION['userID'] = $row['userID'];
+                                // print_r($_SESSION);
+                                echo ' <script>
+                                        $(function() {
+                                            Swal.fire({
+                                                showCancelButton: true,
+                                                showConfirmButton: false,
+                                                cancelButtonText: "ปิด",
+                                                title: "เข้าสู่ระบบสำเร็จ !",
+                                                text: "ยินดีต้อนรับสู่ Webboard!",
+                                                icon: "success"
+                                            });
+                                        });
+                                    </script>';
+                                   header( "refresh:2; url=index.php" );
+                            
+                        } else {
+                                     echo ' <script>
                                     $(function() {
                                         Swal.fire({
                                             showCancelButton: true,
                                             showConfirmButton: false,
                                             cancelButtonText: "ปิด",
-                                            title: "เข้าสู่ระบบสำเร็จ !",
-                                            text: "ยินดีต้อนรับสู่ Webboard!",
-                                            icon: "success"
+                                            title: "ไม่สามารถเข้าสู่ระบบได้",
+                                            text: "Email หรือ Password ผิดพลาด กรุณาลองใหม่อีกครั้ง !",
+                                            icon: "error"
                                         });
                                     });
-                                </script>';
-                                header( "refresh:2; url=index.php" );
-                         }
+                                    </script>';
+                        }
                     }
+                    
     ?>
 </head>
 <body>

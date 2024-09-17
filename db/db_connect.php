@@ -3,13 +3,14 @@ session_start();
 $GLOBALS['conn'] = '';
 
 function connect() {
+    $servername = "localhost";
     $user = 'root';
     $pass = '';
     $database = 'webboard';
-    $GLOBALS['conn']  = mysqli_connect('localhost',$user,$pass,$database);
-    if(!$GLOBALS['conn']) {
-        echo 'Connecting to Webboard Database Failed!!!';
-    } else{
+    $GLOBALS['conn']  = new mysqli($servername,$user,$pass,$database);
+    if($GLOBALS['conn']->connect_error){
+        die("Error connecting to Database: " . $GLOBALS['conn']->connect_error);
+    }else{
         mysqli_set_charset($GLOBALS['conn'], 'utf8');
     }
 }
@@ -25,10 +26,4 @@ function getData($sql) {
     return $data;
 }
 
-function chklogin($loginURL){
-    if(!isset($_SESSION['userName'])){
-        echo '<meta http-equiv="refresh" content="0;url='.$loginURL.'"/>';
-    }
-    
-}
 ?>

@@ -13,6 +13,14 @@
             require 'db/db_connect.php';
             connect();
                     if(isset($_POST['email'])){  
+                        $email = $_POST['email']; 
+                        $userPassword = md5($_POST['userPassword']);
+                        $checkEmailSql = 'SELECT email FROM users WHERE email = ? ';
+                        $prepareCheckEmail = $GLOBALS['conn']->prepare($checkEmailSql);
+                        $prepareCheckEmail->bind_param("s", $email);
+                        $prepareCheckEmail->execute();
+                        $checkEamilResult = $prepareCheckEmail->get_result();
+
                         if(($_POST['email']=='' || $_POST['userPassword']=='' || $_POST['confirmuserPassword']==''
                         || $_POST['firstName']=='' || $_POST['lastName']=='' ) ) {
                             echo ' <script>
@@ -27,8 +35,7 @@
                                         });
                                     });
                                     </script>';
-                        } else if(countRow('users','email',$_POST['email'])!=0) {
-                            //echo countRow('users','email',$_POST['email']);
+                        } else if($checkEamilResult->num_rows > 0) {
                             echo ' <script>
                                 $(function() {
                                         Swal.fire({
@@ -56,12 +63,18 @@
                                     });
                                 </script>';
                         } else {
-                        $sql = 'INSERT INTO Users (email,userPassword,firstName,lastName,userDate,userTime) VALUES 
-                        ("'.$_POST['email'].'","'.$_POST['userPassword'].'","'.$_POST['firstName'].'","'.$_POST['lastName'].'" ,
-                        CURRENT_DATE,CURRENT_TIME) ';
-                        echo $sql;
-                    // $result= mysqli_query($conn,$sql);
-                        echo ' <script>
+                            $email = $_POST['email'];
+                            $userPassword = md5($_POST['userPassword']);
+                            $firstName = $_POST['firstName'];
+                            $lastName = $_POST['lastName'];
+                            
+                            $addUserSql = 'INSERT INTO Users (email,userPassword,firstName,lastName,userDate,userTime) 
+                                          VALUES (?, ?, ?, ?, CURRENT_DATE, CURRENT_TIME) ';
+                            $prepareRegister = $GLOBALS['conn']->prepare($addUserSql);
+                            $prepareRegister->bind_param("ssss",$email,$userPassword,$firstName,$lastName);
+                          
+                            if($prepareRegister->execute()){
+                                echo ' <script>
                                     $(function() {
                                         Swal.fire({
                                             showCancelButton: true,
@@ -73,7 +86,15 @@
                                         });
                                     });
                                 </script>';
-                                header( "refresh:2; url=login.php" );
+                        //         header( "refresh:2; url=login.php" );
+                            }
+                          
+                            $prepareRegister->close();
+                        // $sql = 'INSERT INTO Users (email,userPassword,firstName,lastName,userDate,userTime) VALUES 
+                        // ("'.$_POST['email'].'","'.$_POST['userPassword'].'","'.$_POST['firstName'].'","'.$_POST['lastName'].'" ,
+                        // CURRENT_DATE,CURRENT_TIME) ';
+                        // echo $sql;
+                        
                             }
                     }
     ?>
@@ -130,7 +151,6 @@
                             <div class="row ">
                                 <div class="col-lg-2"></div>
                                 <div class="col-lg-8"> <button type="submit" class="btn btn-success w-100" >ยืนยัน</button></div>
-                                   
                                 <div class="col-lg-2"></div>
                             </div>
                             

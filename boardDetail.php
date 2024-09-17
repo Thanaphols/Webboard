@@ -68,7 +68,7 @@
             <div class="col-lg-3 "> 
             </div>
             <div class="col-lg-6">
-                <div class="card border mb-4  shadow-lg ">
+                <div class="card border mb-2  shadow-lg ">
                     <div class="card-body">
                         <h5 class="card-title text-center ">บอร์ดหมายเลข <?php echo $_GET['boardID'] ?></h5>
                         <p class="card-text form-inline">
@@ -98,6 +98,21 @@
                         </p>
                     </div>
                 </div>
+                <?php  if(isset($_SESSION['userID'])) { ?> 
+                <div class="row ">
+                    <div class="col-sm-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <!-- <h5 class="card-title">Title</h5> -->
+                                <p class="card-text">แสดงความคิดเห็น  </p>             
+                                <textarea  class="form-control" name="commentDetail" id="commentDetail" aria-label="With textarea" 
+                                placeholder="แสดงความคิดเห็น"></textarea>
+                                <button type="submit" class="btn btn-primary w-100 mt-2"> แสดงความคิดเห็น </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <?php } ?>  
                 <div class="row mt-3">
                 <div class="border"></div>
                     <div class="col-sm-3"></div>
@@ -110,7 +125,6 @@
                
                 <div class="card mt-4 shadow-lg  ">
                     <div class="card-body mb-2">
-                        
                         <h5 class="card-title "> </h5>
                                 <?php $i=0; while($data = mysqli_fetch_assoc($resultComment)) { 
                                     $i++; 
@@ -130,19 +144,11 @@
                                 placeholder="Enter Board Body"><?php echo $data['commentDetail']; ?></span>
                                 </div> <br>
                                 <p class="card-text mb-1"> หมายเลขสมาชิก :  <?php echo $data['userID']." คุณ ".$userData['firstName'].' '.$userData['lastName'];  ?>   </p>  
-                                <span classs="card-text" ><?php echo $data['commentDate'].' '.$data['commentTime']; ?> </span>  <br>   <br>  
+                                <span classs="card-text" ><?php echo $data['commentDate'].' '.$data['commentTime']; ?> </span>  <br> <br>
                                 <p class="border"></p> 
                                 <?php } ?> 
-                                <?php  if(isset($_SESSION['userID'])) { ?>  
-                                <p class="card-text">แสดงความคิดเห็น  </p>             
-                                <textarea  class="form-control" name="commentDetail" id="commentDetail" aria-label="With textarea" 
-                                placeholder="Enter Board Body"></textarea>
-                                </div>
-                                <button type="submit" class="btn btn-primary -25"> แสดงความคิดเห็น </button>
-                                
+                                </div> 
                     </div>
-                 
-                <?php } ?>
             </div>
             <div class="col-lg-3"> </div>
             </form>
