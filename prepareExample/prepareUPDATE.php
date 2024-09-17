@@ -70,7 +70,6 @@
             // ปิด prepareUpdateUser Statement
             $prepareUpdateUser->close();
         }
-
     }
     // ปิด prepareDataUserLogin Statement
     $prepareDataUserLogin->close();

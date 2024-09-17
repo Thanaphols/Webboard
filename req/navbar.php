@@ -1,7 +1,13 @@
 <?php 
   if(isset($_SESSION['userID'])) {
-    $sql = 'SELECT email,userRole,firstName,userRole FROM users WHERE userID = '.$_SESSION['userID'].' ';
-    $user = getData($sql);
+    $userID = $_SESSION['userID'];
+    $sql = 'SELECT email,userRole,firstName,userRole FROM users WHERE userID = ? ';
+    $prepareUser = $GLOBALS['conn']->prepare($sql);
+    $prepareUser->bind_param("i",$userID);
+    $prepareUser->execute();
+    $result = $prepareUser->get_result();
+    $user = $result->fetch_assoc();;
+    
     //print_r($user);
 }
 

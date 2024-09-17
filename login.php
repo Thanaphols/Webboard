@@ -14,8 +14,7 @@
             connect();
                     if(isset($_POST['email'])){  
                         $email = $_POST['email'];
-                        $password = md5($_POST['userPassword']);
-                        
+                        $password = md5($_POST['userPassword']);                       
                         $sql = 'SELECT * from users WHERE email = ? AND userPassword = ? ';
                         $prepareUser =  $GLOBALS['conn']->prepare($sql);
                         $prepareUser->bind_param("ss",$email,$password);
@@ -53,62 +52,46 @@
                                     });
                                     </script>';
                         }
-                    }
-                    
+                    }                   
     ?>
 </head>
 <body>
     <?php require 'req/navbar.php' ?>
-
     <div class="container-fluid mt-5 mb-2 ">
     <form method="post">
         <div class="row mt-4 ">
-            <div class="col-lg-4 "> 
-               
-            </div>
-                    
+            <div class="col-lg-4 "> </div> 
             <div class="col-lg-4">
-           
                 <div class="card border-light  shadow-lg ">
                     <div class="card-body">
                         <h5 class="card-title text-center ">เข้าสู่ระบบ</h5>
                         <p class="card-text form-inline">
-
                             <div class="mb-3 row">
                             <label for="email" class="col-sm-3  col-form-label text-while">อีเมล</label>
                                 <div class="col-sm-9 ">
                                 <input type="email"  class="form-control " id="email" name="email" placeholder="Enter Email" value="" >
                                 </div>
                             </div>
-
                             <div class="mb-3 row">
                                 <label for="userPassword" class="col-sm-3 col-form-label" >รหัสผ่าน</label>
                                 <div class="col-sm-9">
                                 <input type="password" class="form-control" id="userPassword" name="userPassword"  placeholder="Enter Password" >
                                 </div>
                             </div>
-                           
-
                             <div class="row mb-2 ">
                                 <div class="col-lg-4"></div>
-                                <div class="col-lg-4 text-center"> <a href="register.php" class="text-dark text-decoration-none" > สมัครสมาชิก </a></div>
-                                   
+                                <div class="col-lg-4 text-center"> <a href="register.php" class="text-dark text-decoration-none" > สมัครสมาชิก </a></div>                                 
                                 <div class="col-lg-4"></div>
                             </div>
-
                             <div class="row ">
                                 <div class="col-lg-2"></div>
-                                <div class="col-lg-8"> <button type="submit" class="btn btn-success w-100" >เข้าสู่ระบบ</button></div>
-                                   
+                                <div class="col-lg-8"> <button type="submit" class="btn btn-success w-100" >เข้าสู่ระบบ</button></div>                                  
                                 <div class="col-lg-2"></div>
-                            </div>
-                            
+                            </div>                            
                         </p>
                     </div>
-                </div>
-            
+                </div>            
             </div>
-
             <div class="col-lg-4"> </div>
             </form>
         </div>

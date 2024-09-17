@@ -67,12 +67,10 @@
                             $userPassword = md5($_POST['userPassword']);
                             $firstName = $_POST['firstName'];
                             $lastName = $_POST['lastName'];
-                            
                             $addUserSql = 'INSERT INTO Users (email,userPassword,firstName,lastName,userDate,userTime) 
-                                          VALUES (?, ?, ?, ?, CURRENT_DATE, CURRENT_TIME) ';
+                                           VALUES (?, ?, ?, ?, CURRENT_DATE, CURRENT_TIME) ';
                             $prepareRegister = $GLOBALS['conn']->prepare($addUserSql);
                             $prepareRegister->bind_param("ssss",$email,$userPassword,$firstName,$lastName);
-                          
                             if($prepareRegister->execute()){
                                 echo ' <script>
                                     $(function() {
@@ -86,28 +84,20 @@
                                         });
                                     });
                                 </script>';
-                        //         header( "refresh:2; url=login.php" );
+                            header( "refresh:2; url=login.php" );
                             }
-                          
                             $prepareRegister->close();
-                        // $sql = 'INSERT INTO Users (email,userPassword,firstName,lastName,userDate,userTime) VALUES 
-                        // ("'.$_POST['email'].'","'.$_POST['userPassword'].'","'.$_POST['firstName'].'","'.$_POST['lastName'].'" ,
-                        // CURRENT_DATE,CURRENT_TIME) ';
-                        // echo $sql;
-                        
                             }
                     }
     ?>
 </head>
 <body>
     <?php require 'req/navbar.php' ?>
-
     <div class="container-fluid mt-5 mb-2">
     <form method="post">
         <div class="row mt-4">
             <div class="col-lg-4 "> 
             </div>
-
             <div class="col-lg-4">
                 <div class="card ">
                     <div class="card-body">

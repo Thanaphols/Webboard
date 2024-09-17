@@ -18,6 +18,8 @@
 </head>
 <body>
 <?php
+  $pass = md5("test");
+  echo $pass;
   $servername = "localhost";
   $username = "root";
   $password = "";
