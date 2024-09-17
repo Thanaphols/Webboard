@@ -10,6 +10,8 @@ $board['img']='';
     $boardSql = 'SELECT * FROM board WHERE userID = '.$_SESSION['userID'].' ';
     //echo $boardSql;
     $boardResult = mysqli_query($GLOBALS['conn'],$boardSql);
+    $categorySQL = 'SELECT * FROM category';
+    $result1 = mysqli_query($GLOBALS['conn'],$categorySQL);
 ?>
     <meta charset="UTF-8">
     <link href="css/style.css" rel="stylesheet" type="text/css"/>
@@ -25,24 +27,14 @@ $board['img']='';
         <div class="col-sm-4"></div>
         <div class="col-sm-4 text-center"><h5>บอร์ดทั้งหมดของคุณ <?php echo $data['firstName']; echo ' '; echo $data['lastName']; ?></h5>
     </div>
-        <div class="col-sm-4 text-end">
-        <div class="dropdown">
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                    หมวดหมู่
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                    <li><a class="dropdown-item" href="#">Action</a></li>
-                    <li><a class="dropdown-item" href="#">Another action</a></li>
-                    <li><a class="dropdown-item" href="#">Something else here</a></li>
-                </ul>
-            </div>
-        </div>
+        <div class="col-sm-4 text-end"></div>
     </div>
         <div class="row  mt-2 mb-2">
             <div class="col-sm-2"></div>
             <div class="col-sm-8 ">
                 <div class="row ">
-                    <?php while ( $data = mysqli_fetch_assoc($boardResult) ) { 
+                    <?php $i=0; while ( $data = mysqli_fetch_assoc($boardResult) ) { 
+                        $i++;
                         $categorySql = 'SELECT categoryName FROM category WHERE categoryID = '.$data['categoryID'].' ';
                         $category = getData($categorySql);
                         $commnet = countROW('comment','boardID',$data['boardID']);
@@ -84,9 +76,18 @@ $board['img']='';
                         <?php } else { ?>
                             <div class="row">
                             <div class="col-sm-12">
-                            <h5 class="text-start mt-2 mb-1"><?php echo $data['boardHeader'] ?></h5>
-                                <p class="text-start mb-1">Category : <?php echo $category['categoryName']; ?></p>
-                                <p></p>
+                                <h5 class="text-start mt-2 mb-1"><?php echo $data['boardHeader'] ?> 
+                                <a href="editBoard.php?boardID=<?php echo $data['boardID']; ?>" class="btn btn-sm btn-outline-primary ">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                        <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                                        <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+                                        </svg>
+                                </a>
+                                </h5>
+                                <p class="text-start mb-1">Category : <?php echo $category['categoryName']; ?>
+                            </p>
+                                
+                                    
                                 <div class="row">
                                     <div class="col-sm-5"><p>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar-check" viewBox="0 0 16 16">
@@ -112,10 +113,12 @@ $board['img']='';
                                 </p>
                                 </div>
                                 </div>
+                                <a href="boardDetail.php?boardID=<?php echo $data['boardID']  ?>" class="btn btn-outline-primary mb-2">ดูรายละเอียด</a>
                             </div>
                         </div>
                             <?php }  ?>
                     </div>
+                    
                      <?php } ?>
                     
                 </div> 
