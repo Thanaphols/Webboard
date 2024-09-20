@@ -22,8 +22,13 @@
                         $result = $prepareUser->get_result();
                         if($result->num_rows > 0) {
                            $row = $result->fetch_assoc();
-                                $_SESSION['userID'] = $row['userID'];
-                                // print_r($_SESSION);
+                                if($row['userRole']==1){
+                                    $_SESSION['userID'] = $row['userID'];  
+                                    $_SESSION['userRole'] = $row['userRole'];   
+                                }else{
+                                    $_SESSION['userID'] = $row['userID'];
+                                    
+                                }
                                 echo ' <script>
                                         $(function() {
                                             Swal.fire({

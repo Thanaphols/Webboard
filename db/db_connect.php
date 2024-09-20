@@ -15,8 +15,11 @@ function connect() {
     }
 }
 function countRow($table, $column,$value) {
-    $sql = 'SELECT * FROM '.$table.' WHERE '.$column.' = "'.$value.'" ';
-    $result = mysqli_query($GLOBALS['conn'],$sql);
+    $sql = 'SELECT * FROM '.$table.' WHERE '.$column.' = ? ';
+    $preparesql = $GLOBALS['conn']->prepare($sql);
+    $preparesql->bind_param("s",$value);
+    $preparesql->execute();
+    $result = $preparesql->get_result();
     return $result->num_rows;
 }
 

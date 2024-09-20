@@ -15,49 +15,46 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
+  <?php 
+ require 'db/db_connect.php';
+ connect();
+ $boardID = 3;
+$getcommentSQL = 'SELECT * FROM comment WHERE boardID = ? ORDER BY  commentDate DESC , commentTime  DESC ';
+$prepareComment = $GLOBALS['conn']->prepare($getcommentSQL);
+$prepareComment->bind_param("i",$boardID);
+$prepareComment->execute();
+$resultComment = $prepareComment->get_result();
+$i=0; 
+  if(isset($POST['my'])){
+    echo '123';
+  }
+?>
 </head>
 <body>
-<?php
-  $pass = md5("test");
-  echo $pass;
-  $servername = "localhost";
-  $username = "root";
-  $password = "";
-  $dbname = "webboard";
 
-  // Create connection
-  $GLOBALS['conn'] = new mysqli($servername, $username, $password, $dbname);
+<div class="container mt-4">
 
-  // Check connection
-  if ($GLOBALS['conn']->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-  }
 
-  // prepare and bind
-  // Prepare the SQL statement
-$stmt = $GLOBALS['conn']->prepare('SELECT * FROM board WHERE boardID = ?');
-// Bind the parameter (in this case, the email) as a string
-$stmt->bind_param("i", $email);
+<button onclick="getData()">Get Data</button>
 
-// Set the email parameter and execute the statement
-$email = 1;
-$stmt->execute();
-
-// Get the result set
-$result = $stmt->get_result();
-// Fetch the data if necessary (optional, depends on what you want to do)
-if ($result->num_rows > 0) {
-    while($row = $result->fetch_assoc()) {
-        // Process each row
-        echo "User: " . $row['boardHeader']; // Example of output
-    }
-} else {
-    echo "No user found with this email.";
+<script>
+function getData() {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "getData.php", true); // เรียกใช้ไฟล์ PHP
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            var response = xhr.responseText; // ข้อมูลที่ได้จาก PHP
+            alert("Data from PHP: " + response);
+        }
+    };
+    xhr.send();
 }
+</script>
 
 
-  $stmt->close();
-  $GLOBALS['conn']->close();
-?>
+<!-- jQuery and Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>

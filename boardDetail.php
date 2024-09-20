@@ -12,15 +12,24 @@
     <?php 
             require 'db/db_connect.php';
             connect();
+            $boardID = $_GET['boardID'];
             $boardSql = 'SELECT board.boardHeader, board.boardBody,board.userID AS userBoardID, board.categoryID,board.boardDate,board.boardTime ,
                     users.firstName AS userBoardFirstName , users.lastName AS userBoardLastName ,
                     category.categoryName 
-                    FROM board INNER JOIN users ON users.userID = board.userID AND board.boardID = '.$_GET['boardID'].' 
-                    INNER JOIN category  ON category.categoryID = board.categoryID  WHERE board.boardID = '.$_GET['boardID'].'' ;
-             $board = getData($boardSql);
+                    FROM board INNER JOIN users ON users.userID = board.userID AND board.boardID = ? 
+                    INNER JOIN category  ON category.categoryID = board.categoryID  WHERE board.boardID = ? ' ;
+            $prepareboard = $GLOBALS['conn']->prepare($boardSql);
+            $prepareboard->bind_param("ii",$boardID,$boardID);
+            $prepareboard->execute();
+            $result =$prepareboard->get_result();
+            if($result->num_rows == 0) {
+                header('refresh:0 ; url=index.php');
+            }
+             $board =  $result->fetch_assoc();
              $comment = countRow('comment','boardID',$_GET['boardID']);
-            
+            // User Comment 
             if(isset($_POST['commentDetail'])) {
+
                 if($_POST['commentDetail']=='') {
                     echo ' <script>
                             $(function() {
@@ -52,12 +61,23 @@
                                 });
                             });
                             </script>';
+                            $comment = countRow('comment','boardID',$_GET['boardID']);
                 }
             }
-            $getcommentSQL = 'SELECT * FROM comment WHERE boardID = '.$_GET['boardID'].' ';
-           
-            $resultComment = mysqli_query($GLOBALS['conn'],$getcommentSQL);
-           
+            // SELECT ALL comment ORDER BY DATE AND TIME
+            $commentDate = "commentDate";
+            $commentTime = "commentTime";
+            $getcommentSQL = 'SELECT * FROM comment WHERE boardID = ? ORDER BY  commentDate DESC , commentTime  DESC ';
+            $prepareComment = $GLOBALS['conn']->prepare($getcommentSQL);
+            $prepareComment->bind_param("i",$boardID);
+            $prepareComment->execute();
+            $resultComment = $prepareComment->get_result();
+            $prepareComment->close(); 
+           $prepareboard->close();
+           // Edit Comment
+           if(isset($_POST['editCommnet'])) {
+            echo' 123';
+           }
     ?>
 </head>
 <body>
@@ -67,10 +87,11 @@
         <div class="row mt-4 mb-4 ">
             <div class="col-lg-3 "> 
             </div>
+            <!-- Board -->
             <div class="col-lg-6">
                 <div class="card border mb-2  shadow-lg ">
                     <div class="card-body">
-                        <h5 class="card-title text-center ">บอร์ดหมายเลข <?php echo $_GET['boardID'] ?></h5>
+                        <h5 class="card-title text-center ">บอร์ดหมายเลข <?php echo $boardID ?></h5>
                         <p class="card-text form-inline">
                             <div class="mb-3 row">
                             <label for="email" class="col-sm-3 col-form-label text-while">ห้วข้อบอร์ด</label>
@@ -92,7 +113,17 @@
                                 </label>
                                 <div class="col-sm-12">
                                 <span >สมาชิกหมายเลข <?php echo $board['userBoardID'] ?> :  <?php echo $board['userBoardFirstName'].' '. $board['userBoardLastName'] ?> </span><br>
-                                <span classs="card-text" ><?php echo $board['boardDate'].' '.$board['boardTime']; ?> </span>
+                                <span classs="card-text" >
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar-check" viewBox="0 0 16 16">
+                                    <path d="M10.854 7.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 9.793l2.646-2.647a.5.5 0 0 1 .708 0"/>
+                                    <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/>
+                                    </svg> 
+                                    <?php $date=date_create($board['boardDate']);
+                                     echo date_format($date,"d/m/Y").' 
+                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16">
+                                        <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/>
+                                        <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"/>
+                                    </svg> '.$board['boardTime']; ?> </span> 
                             </div>
                             </div>
                         </p>
@@ -112,46 +143,129 @@
                         </div>
                     </div>
                 </div>
+                </form>
                 <?php } ?>  
+                <!-- Comment -->
                 <div class="row mt-3">
                 <div class="border"></div>
                     <div class="col-sm-3"></div>
                     <div class="col-sm-6 mt-2 mb-2">
+                        <?php if($comment > 0 ) { ?>
                     <span class> ความคิดเห็นทั้งหมด <?php echo $comment; ?></span>
+                        <?php }else { ?>
+                    <span class> ไม่มีความคิดเห็น</span>           
+                        <?php } ?>
                     </div>
                     <div class="col-sm-3"></div>
                     <div class="border "></div>
                 </div>
-               
+               <?php if($resultComment->num_rows > 0) { ?>
                 <div class="card mt-4 shadow-lg  ">
                     <div class="card-body mb-2">
                         <h5 class="card-title "> </h5>
                                 <?php $i=0; while($data = mysqli_fetch_assoc($resultComment)) { 
                                     $i++; 
-                                    $userCommentSQL = 'SELECT firstName,lastName FROM users WHERE userID = '.$data['userID'].' ';
-                                    $userData = getData($userCommentSQL);
+                                    $userID = $data['userID'];
+                                    $userCommentSQL = 'SELECT firstName,lastName FROM users WHERE userID = ?  ';
+                                    $prepareUserComment = $GLOBALS['conn']->prepare($userCommentSQL);
+                                    $prepareUserComment->bind_param("i",$userID);
+                                    $prepareUserComment->execute();
+                                    $resultUser = $prepareUserComment->get_result();
+                                    $userData = $resultUser->fetch_assoc();
                                     ?>
-                                    <label  class="col-sm-3 col-form-label">ความคิดเห็นที่  <?php echo $i;if(@$_SESSION['userID'] == $data['userID'] ) { ?>
-                                    <a href="editBoard.php?boardID=<?php echo $data['boardID']; ?>" class="btn btn-sm btn-outline-primary ">
+                                    <div class="col-sm-4">
+
+                                    
+                                    <label  class="col-form-label"> ความคิดเห็นที่  <?php echo $i;  ;if((@$_SESSION['userID'] == $data['userID'] ) || @$_SESSION['userRole'] == 1 ) { ?>
+                                        <!-- Button trigger modal Comment -->
+                                    <button   type="button" data-bs-toggle="modal" data-bs-target="#commnet<?php echo $data['commentID'] ?>" class="btn btn-sm btn-outline-primary ">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
                                         <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
                                         <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
                                         </svg>
-                                    </a>
-                                    <?php } ?> </label>           
+                                    </button>
+                                    </label>  
+                                    <button   type="button" data-bs-toggle="modal" data-bs-target="#decommnet<?php echo $data['commentID'] ?>" class="btn btn-sm btn-outline-danger ">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+                                            <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                                        </svg>
+                                    </button>
+                                    <?php } ?> 
+                                    </div>
+                                    <!-- Modal Comment Edit Comment -->
+                                        <div class="modal fade" id="commnet<?php echo $data['commentID'] ?>" tabindex="-1" aria-labelledby="commnetLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="commnetLabel">คุณต้องการแก้ไขคอมเม้นหมายเลข <?php echo $data['commentID'] ?></h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="col-sm-12">
+                                                    <label for="editcomment" class="col-sm-3  col-form-label text-while"></label>
+                                                        <input type="text" disabled  class="form-control " id="editcomment" name="editcomment" value="<?php echo $data['commentDetail'];  ?>">
+                                                        </div> <br>
+                                                        <p class="card-text mb-1"> หมายเลขสมาชิก :  <?php echo $data['userID']." คุณ ".$userData['firstName'].' '.$userData['lastName'];  ?>   </p>  
+                                                        <span classs="card-text" ><?php echo $data['commentDate'].' '.$data['commentTime']; ?> </span>  <br> <br>
+                                                        
+                                                    </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+                                                    <a href="editComment.php?commentID=<?php echo $data['commentID'] ?>&userID=<?php echo $data['userID'] ?>&boardID=<?php echo $boardID ?>"  class="btn btn-primary">แก้ไข</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    <!-- Modal Comment Delete Comment -->
+                                        <div class="modal fade" id="decommnet<?php echo $data['commentID'] ?>" tabindex="-1" aria-labelledby="commnetLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="decommnetLabel">คุณต้องการลบคอมเม้น <?php echo $data['commentID'] ?></h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="col-sm-12">
+                                                    <label for="decomment" class="col-sm-3  col-form-label text-while"></label>
+                                                        <input type="text" disabled  class="form-control " id="decomment" name="decomment" value="<?php echo $data['commentDetail'];  ?>">
+                                                        </div> <br>
+                                                        <p class="card-text mb-1"> หมายเลขสมาชิก :  <?php echo $data['userID']." คุณ ".$userData['firstName'].' '.$userData['lastName'];  ?>   </p>  
+                                                        <span classs="card-text" ><?php echo $data['commentDate'].' '.$data['commentTime']; ?> </span>  <br> <br>
+                                                        
+                                                    </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+                                                    <a href="deleteComment.php?commentID=<?php echo $data['commentID'] ?>&userID=<?php echo $data['userID'] ?>&boardID=<?php echo $boardID ?>"  class="btn btn-danger">ลบ</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </div>
                                 <div class="col-sm-12">
-                                <span disabled class="form-control" name="boardBody" id="boardBody" diabled  
+                                <span  class="form-control" name="boardBody" id="boardBody" diabled  
                                 placeholder="Enter Board Body"><?php echo $data['commentDetail']; ?></span>
                                 </div> <br>
                                 <p class="card-text mb-1"> หมายเลขสมาชิก :  <?php echo $data['userID']." คุณ ".$userData['firstName'].' '.$userData['lastName'];  ?>   </p>  
-                                <span classs="card-text" ><?php echo $data['commentDate'].' '.$data['commentTime']; ?> </span>  <br> <br>
+                                <span classs="card-text" >
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar-check" viewBox="0 0 16 16">
+                                    <path d="M10.854 7.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 9.793l2.646-2.647a.5.5 0 0 1 .708 0"/>
+                                    <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/>
+                                    </svg> 
+                                    <?php $date=date_create($data['commentDate']);
+                                     echo date_format($date,"d/m/Y").' 
+                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16">
+                                        <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/>
+                                        <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"/>
+                                    </svg> '.$data['commentTime']; ?> </span>   <br> <br>
                                 <p class="border"></p> 
                                 <?php } ?> 
                                 </div> 
-                    </div>
+                </div>
+                <?php } ?>
             </div>
             <div class="col-lg-3"> </div>
-            </form>
+           
+            
         </div>
     </div>
     </body>

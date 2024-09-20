@@ -14,9 +14,18 @@
             connect();
             $sql1 = 'SELECT * FROM category';
             $result1 = mysqli_query($GLOBALS['conn'],$sql1);
-            $sql2 = 'SELECT board.* ,category.* FROM board INNER JOIN category ON boardID = '.$_GET['boardID'].' AND category.categoryID = board.categoryID;';
-            $board = getData($sql2);
+            $boardID = $_GET['boardID'];
+            $boardSQL = 'SELECT board.* ,category.* FROM board INNER JOIN category ON boardID = ? AND category.categoryID = board.categoryID;';
+            $prepareBoard= $GLOBALS['conn']->prepare($boardSQL);
+            $prepareBoard->bind_param("i",$boardID);
+            $prepareBoard->execute();
+            $result = $prepareBoard->get_result();
+            $board = $result->fetch_assoc();
+
             if(isset($_POST['categoryID'])) {
+                $boardHeader = $_POST['boardHeader'];
+                $boardBody = $_POST['boardBody'];
+                $categoryID = $_POST['categoryID'];
                     if($_POST['boardHeader']=='' || $_POST['boardBody']==''){
                         echo ' <script>
                         $(function() {
@@ -48,10 +57,12 @@
                             // }
                         }else{
                             if($_POST['categoryID'] != $board['categoryID']) {
-                                
-                            $updateBoardSQL = 'UPDATE board SET boardHeader = "'.$_POST['boardHeader'].'",
-                            boardBody = "'.$_POST['boardBody'].'", categoryID = "'.$_POST['categoryID'].'" WHERE boardID = '.$_GET['boardID'].' ';
-                            echo $updateBoardSQL;
+                            $updateBoardSQL = 'UPDATE board SET boardHeader = ?,
+                            boardBody = ? , categoryID = ? WHERE boardID = ? ';
+                            $prepareUpdateBoard =  $GLOBALS['conn']->prepare($updateBoardSQL);
+                            $prepareUpdateBoard->bind_param("ssii",$boardHeader,$boardBody,$categoryID,$boardID);
+                            $prepareUpdateBoard->execute();
+                            //echo $updateBoardSQL;
                             // $result2 = mysqli_query($GLOBALS['conn'],$updateBoardSQL);
                             echo ' <script>
                             $(function() {
@@ -65,11 +76,13 @@
                                 });
                             });
                             </script>';
-                         //  header ( 'refresh: 2; url = index.php ' );
+                           header ( 'refresh: 2; url = index.php ' );
                             }else{
-                                $updateBoardSQL = 'UPDATE board SET boardHeader = "'.$_POST['boardHeader'].'",
-                                boardBody = "'.$_POST['boardBody'].'"  WHERE boardID = '.$_GET['boardID'].' ';
-                                $result2 = mysqli_query($GLOBALS['conn'],$updateBoardSQL);
+                                $updateBoardSQL = 'UPDATE board SET boardHeader = ?,
+                                boardBody = ?  WHERE boardID = ? ';
+                                $prepareUpdateBoard =  $GLOBALS['conn']->prepare($updateBoardSQL);
+                                $prepareUpdateBoard->bind_param("ssi",$boardHeader,$boardBody,$boardID);
+                                $prepareUpdateBoard->execute();
                                 echo ' <script>
                                 $(function() {
                                     Swal.fire({
@@ -82,7 +95,7 @@
                                     });
                                 });
                                 </script>';
-                             //  header ( 'refresh: 2; url = index.php ' );
+                               header ( 'refresh: 2; url = index.php ' );
                             }
                         }
                     }
