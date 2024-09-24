@@ -44,7 +44,7 @@
 
             <?php if($user['userRole']==1) { ?>
             <div class="dropdown-divider"></div>
-            <div class="li"><a href="#"  class="dropdown-item  ml-3"> ผู้ดูแลระบบ </a></div>
+            <div class="li"><a href="admin.php"  class="dropdown-item  ml-3"> ผู้ดูแลระบบ </a></div>
             <?php } ?>
             <div class="dropdown-divider"></div>
             <div class="li"><a href="logout.php"  class="dropdown-item  ml-3"> ออกจากระบบ </a></div>

@@ -21,7 +21,9 @@
             $prepareBoard->execute();
             $result = $prepareBoard->get_result();
             $board = $result->fetch_assoc();
-
+            if($_SESSION['userID'] != $board['userID'] && $_SESSION['userRole'] != 1){
+                header("refresh:0;url=index.php");
+            }
             if(isset($_POST['categoryID'])) {
                 $boardHeader = $_POST['boardHeader'];
                 $boardBody = $_POST['boardBody'];

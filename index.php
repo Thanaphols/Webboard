@@ -23,6 +23,56 @@ connect();
 <body>
     <?php require 'req/navbar.php' ?>
     <div class="container-fluid  mt-3 mb-2">
+        <div class="row">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-8">
+                <div class="row mb-2 mt-2">
+                    <div class="col-sm-3">
+                        <div class="card ">
+                        <div class="card-body">
+                            <h5 class="card-title">Category</h5>
+                            <p class="card-text">Content</p>
+                            <p class="card-text">Content</p>
+                            <p class="card-text">Content</p>
+                        </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="card ">
+                        <div class="card-body">
+                            <h5 class="card-title">Category</h5>
+                            <p class="card-text">Content</p>
+                            <p class="card-text">Content</p>
+                            <p class="card-text">Content</p>
+                        </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="card ">
+                        <div class="card-body">
+                            <h5 class="card-title">Category</h5>
+                            <p class="card-text">Content</p>
+                            <p class="card-text">Content</p>
+                            <p class="card-text">Content</p>
+                        </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="card ">
+                        <div class="card-body">
+                            <h5 class="card-title">Category</h5>
+                            <p class="card-text">Content</p>
+                            <p class="card-text">Content</p>
+                            <p class="card-text">Content</p>
+                        </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+          
+            <div class="col-sm-2"></div>
+        </div>
     <div class="row">
         <div class="col-sm-4"></div>
         <div class="col-sm-4 text-center"><h5>บอร์ดทั้งหมด </h5>
