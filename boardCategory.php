@@ -27,15 +27,23 @@ connect();
             </script>'; 
         unset($_SESSION['delete']);
     }
-    
+    if(empty($_GET)){
+        header('Location:index.php');
+    }
+    $category  = $_GET['categoryID'];
     $board['img']='';
     $sql = 'SELECT users.userID, users.firstName , users.lastName ,
     board.boardID, board.boardHeader, board.boardBody , board.boardDate, board.boardTime ,
     category.categoryName 
     FROM board INNER JOIN users ON users.userID = board.userID 
     INNER JOIN category ON category.categoryID = board.categoryID 
-    ORDER BY board.boardDate DESC , board.boardTime DESC ';
-    $boardResult = mysqli_query($GLOBALS['conn'],$sql);
+    WHERE board.categoryID = ?
+    ORDER BY board.boardDate DESC , board.boardTime DESC  ';
+    $preparesql = $GLOBALS['conn']->prepare($sql);
+    $preparesql->bind_param("i",$category);
+    $preparesql->execute();
+
+    $boardResult = $preparesql->get_result();
     $categorySQL =  'SELECT *FROM category ';
     $category = mysqli_query($GLOBALS['conn'],$categorySQL);
     if(isset($_POST['categoryID'])){
@@ -51,7 +59,12 @@ connect();
         <div class="row">
             <div class="col-sm-2"></div>
             <div class="col-sm-8">
-                <h5 class="text-center">หมวดหมู่</h5>
+                <h5 class="text-center"> <?php if($_GET['categoryID']==1) {    ?>
+                    หมวดหมู่ บันเทิง
+                    <?php } else if ($_GET['categoryID']==2){  ?>
+                        หมวดหมู่ สุขภาพ
+                    <?php }   ?>
+                </h5>
                 <form method="post" >
                 <div class="row">
                     <?php while($cate = $category->fetch_assoc()){ ?>
@@ -66,10 +79,7 @@ connect();
           
             <div class="col-sm-2"></div>
         </div>
-    <div class="row">
-        <div class="col-sm-4"></div>
-        <div class="col-sm-4 text-center"><h5>บอร์ดทั้งหมด </h5>
-    </div>
+   
         <div class="col-sm-4 text-end"></div>
     </div>
         <div class="row  mt-2 mb-2">

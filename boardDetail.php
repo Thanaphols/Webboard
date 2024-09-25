@@ -12,6 +12,21 @@
     <?php 
             require 'db/db_connect.php';
             connect();
+            if(@$_SESSION['delete']==1) {
+                echo ' <script>
+                        $(function() {
+                             Swal.fire({
+                                showCancelButton: true,
+                                 showConfirmButton: false,
+                                cancelButtonText: "ปิด",
+                                title: "ลบคอมเม้นสำเร็จ !",
+                              text: "",
+                              icon: "success"
+                             });
+                        });
+                    </script>'; 
+                unset($_SESSION['delete']);
+            }
             $boardID = $_GET['boardID'];
             $boardSql = 'SELECT board.boardHeader, board.boardBody,board.userID AS userBoardID, board.categoryID,board.boardDate,board.boardTime ,
                     users.firstName AS userBoardFirstName , users.lastName AS userBoardLastName ,

@@ -18,36 +18,21 @@
   <?php 
  require 'db/db_connect.php';
  connect();
- $boardID = 3;
-$getcommentSQL = 'SELECT * FROM comment WHERE boardID = ? ORDER BY  commentDate DESC , commentTime  DESC ';
-$prepareComment = $GLOBALS['conn']->prepare($getcommentSQL);
-$prepareComment->bind_param("i",$boardID);
-$prepareComment->execute();
-$resultComment = $prepareComment->get_result();
-$i=0; 
-  if(isset($POST['my'])){
-    echo '123';
-  }
+
+$getcommentSQL = 'SELECT * FROM board   ';
+
 ?>
 </head>
 <body>
 
 <div class="container mt-4">
+<form action="" method="post">
 
-
-<button onclick="getData()">Get Data</button>
-
+<button type="button" class="btn btn-primary" onclick="getData()">Get Data</button>
+</form>
 <script>
 function getData() {
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET", "getData.php", true); // เรียกใช้ไฟล์ PHP
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-            var response = xhr.responseText; // ข้อมูลที่ได้จาก PHP
-            alert("Data from PHP: " + response);
-        }
-    };
-    xhr.send();
+  
 }
 </script>
 

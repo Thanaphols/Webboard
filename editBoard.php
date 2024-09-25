@@ -97,6 +97,7 @@
                                     });
                                 });
                                 </script>';
+                                $_SESSION['edit'] = true;
                                header ( 'refresh: 2; url = index.php ' );
                             }
                         }

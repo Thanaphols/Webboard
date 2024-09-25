@@ -15,6 +15,7 @@
                      $preparedecommnetSQL->bind_param("i",$commentID);
                      $preparedecommnetSQL->execute();
                      $preparedecommnetSQL->close();
+                     $_SESSION['delete'] = true;
                      header("refresh:0; url=boardDetail.php?boardID= $boardID");
                  }
     ?>
