@@ -80,25 +80,31 @@
                             </script>';
                            header ( 'refresh: 2; url = index.php ' );
                             }else{
-                                $updateBoardSQL = 'UPDATE board SET boardHeader = ?,
-                                boardBody = ?  WHERE boardID = ? ';
-                                $prepareUpdateBoard =  $GLOBALS['conn']->prepare($updateBoardSQL);
-                                $prepareUpdateBoard->bind_param("ssi",$boardHeader,$boardBody,$boardID);
-                                $prepareUpdateBoard->execute();
-                                echo ' <script>
-                                $(function() {
-                                    Swal.fire({
-                                        showCancelButton: true,
-                                        showConfirmButton: false,
-                                        cancelButtonText: "ปิด",
-                                        title: "แก้ไขบอร์ดสำเร็จ !",
-                                        text: "กรุณารอสักครู่ !",
-                                        icon: "success"
+                                
+
+                                    $updateBoardSQL = 'UPDATE board SET boardHeader = ?,
+                                    boardBody = ?  WHERE boardID = ? ';
+                                    $prepareUpdateBoard =  $GLOBALS['conn']->prepare($updateBoardSQL);
+                                    $prepareUpdateBoard->bind_param("ssi",$boardHeader,$boardBody,$boardID);
+                                    $prepareUpdateBoard->execute();
+                                    echo ' <script>
+                                    $(function() {
+                                        Swal.fire({
+                                            showCancelButton: true,
+                                            showConfirmButton: false,
+                                            cancelButtonText: "ปิด",
+                                            title: "แก้ไขบอร์ดสำเร็จ !",
+                                            text: "กรุณารอสักครู่ !",
+                                            icon: "success"
+                                        });
                                     });
-                                });
-                                </script>';
-                                $_SESSION['edit'] = true;
-                               header ( 'refresh: 2; url = index.php ' );
+                                    </script>';
+                                    $_SESSION['edit'] = true;
+                                if($_GET['admin']!=1){
+                                   header ( 'refresh: 2; url = index.php ' );
+                                } else{
+                                    header ( 'refresh: 2; url = adminBoard.php ' );
+                                }
                             }
                         }
                     }

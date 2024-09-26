@@ -16,30 +16,16 @@
       if(@$_SESSION['userRole']!=1) {
         header('refresh:0;url=index.php');
       }
-        if(empty($_GET)){
-            header('refresh:0 ;url=adminCategory.php');
-            // echo 123;
-        }
-        if(@$_GET['d']==1){
-                    $_SESSION['delete'] = true;
-                    $categoryID = $_GET['categoryID'];
-                    $deleteSQL = 'DELETE FROM category WHERE categoryID = ?';
-                    $preparedeleteSQL = $GLOBALS['conn']->prepare($deleteSQL);
-                    $preparedeleteSQL->bind_param("i",$categoryID);
-                    $preparedeleteSQL->execute();
-                    header('refresh:0; url=adminCategory.php');
-        }else{
-            
-        $categoryID = $_GET['categoryID'];
-        $categorySQL = 'SELECT * FROM category WHERE categoryID = ? ';
-        $preparecatgorySQL = $GLOBALS['conn']->prepare($categorySQL);
-        $preparecatgorySQL->bind_param("i",$categoryID);
-        $preparecatgorySQL->execute();
-        $result = $preparecatgorySQL->get_result();
-        $category = $result->fetch_assoc();
-
+       
         if(isset($_POST['categoryName'])) {
-            if($_POST['categoryName']==''){
+             $categoryName = $_POST['categoryName'];
+             $categoryName;
+            $categoryNameSQL = 'SELECT * FROM category WHERE categoryName = ? ';
+            $preparecategoryNameSQL = $GLOBALS['conn']->prepare($categoryNameSQL);
+            $preparecategoryNameSQL->bind_param("s", $categoryName);
+            $preparecategoryNameSQL->execute();
+            $result = $preparecategoryNameSQL->get_result();    
+                if($_POST['categoryName']==''){
                 echo ' <script>
                                     $(function() {
                                         Swal.fire({
@@ -52,27 +38,38 @@
                                         });
                                     });
                                 </script>';
-            }else{
-                $categoryName = $_POST['categoryName'];
-                $updateCategorySQL = ' UPDATE category SET categoryName = ? WHERE categoryID = ?';
-                $prepareupdateCategorySQL = $GLOBALS['conn']->prepare($updateCategorySQL);
-                $prepareupdateCategorySQL->bind_param("si",$categoryName,$categoryID);
-                $prepareupdateCategorySQL->execute();
+            }else if($row = $result->num_rows > 0){
                 echo ' <script>
                                     $(function() {
                                         Swal.fire({
                                             showCancelButton: true,
                                             showConfirmButton: false,
                                             cancelButtonText: "ปิด",
-                                            title: "แก้ไขข้อมูลสำเร็จ !",
-                                            text: "กรุณารอสักครู่ !",
-                                            icon: "success"
+                                            title: "เกิดข้อผิดพลาด !",
+                                            text: "มีหมวดหมู่นี้แล้ว !",
+                                            icon: "error"
                                         });
                                     });
                                 </script>';
-                            header("refresh:2; url=adminCategory.php");
+            }else{
+                $addCategorySQL = 'INSERT INTO category (categoryName) VALUES (?) ';
+                $prepareaddCategorySQL = $GLOBALS['conn']->prepare($addCategorySQL);
+                $prepareaddCategorySQL->bind_param("s",$categoryName);
+                $prepareaddCategorySQL->execute();
+                echo ' <script>
+                $(function() {
+                    Swal.fire({
+                        showCancelButton: true,
+                        showConfirmButton: false,
+                        cancelButtonText: "ปิด",
+                        title: "เพิ่มข้อมูลสำเร็จ !",
+                        text: "กรุณารอสักครู่ !",
+                        icon: "success"
+                    });
+                });
+            </script>';
+        header("refresh:2; url=adminCategory.php");
             }
-        }
         }
       ?>
 </head>
@@ -86,11 +83,11 @@
             <form  method="post">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title text-center">แก้ไขหมวดหมู่</h5>  
+                    <h5 class="card-title text-center">เพิ่มหมวดหมู่</h5>  
                     <p class="card-text">
                         <label for="categoryName" class="mb-2 col-form-label">ชื่อหมวดหมู่</label>
-                        <input type="text" name="categoryName" id="categoryName" class="form-control" value="<?php echo $category['categoryName'] ?>"  >
-                        <button type="submit" class="btn btn-success w-100 mt-2 mb-2">แก้ไข</button>
+                        <input type="text" name="categoryName" id="categoryName" class="form-control" placeholder="Enter Category Name"  >
+                        <button type="submit" class="btn btn-success w-100 mt-2 mb-2">เพิ่ม</button>
                     </p>
                 </div>
             </div>

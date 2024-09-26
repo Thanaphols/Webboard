@@ -13,25 +13,9 @@
     <?php 
       require 'db/db_connect.php';
       connect();
-        if($_SESSION['userRole']!=1){
-          header('refresh:0; url=index.php');
-          }else if(@$_SESSION['delete']==1){
-            echo ' <script>
-                                    $(function() {
-                                        Swal.fire({
-                                            showCancelButton: true,
-                                            showConfirmButton: false,
-                                            cancelButtonText: "ปิด",
-                                            title: "ลบหมวดหมู่สำเร็จ !",
-                                            text: " ",
-                                            icon: "success"
-                                        });
-                                    });
-                                </script>';
-            unset($_SESSION['delete']);
-          }else{
-
-          }
+      if(@$_SESSION['userRole']!=1) {
+        header('refresh:0;url=index.php');
+      }
       ?>
 </head>
 <body>
@@ -42,7 +26,7 @@
         <div class="col-sm-4">
             
         </div>
-        <div class="col-sm-4 text-center"><h5>ข้อมูลหมวดหมู่ <a href="adminAddCategory.php" class="btn btn-primary">เพิ่มหมวดหมู๋</a> </h5> 
+        <div class="col-sm-4 text-center"><h5>ข้อมูลคอมเม้น</h5>
     </div>
         <div class="col-sm-4 text-end"></div>
     </div>
@@ -63,33 +47,48 @@
                         
             </div>
             </div>
-           <div class="col-sm-8">
+           <div class="col-sm-10">
            <table class="table">
                     <thead>
                       <tr>
-                        <th scope="col" >ไอดีหมวดหมู่</th>
-                        <th scope="col">หมวดหมู่</th>
+                        <th scope="col" >หมายเลขคอมเม้น</th>
+                        <th scope="col">หมายเลบขบอร์ด</th>
+                        <th scope="col" >หมายเลขสมาชิก</th>
+                        <th scope="col">คอมเม้นเนื้อหา</th>
+                        <th scope="col">วันที่คอมเม้น</th>
+                        <th scope="col">เวลาที่คอมเม้น</th>
                         <th scope="col"></th>
                       </tr>
                     </thead>
                     <?php  
-                        $catersql = 'SELECT * FROM category';
-                        $result = mysqli_query($GLOBALS['conn'],$catersql);
-                         while($category = mysqli_fetch_assoc($result) ) {
-                          
+                      $start = 0;
+                        $boardsql = 'SELECT * FROM comment LIMIT '.$start.' , 2';
+                        $result = mysqli_query($GLOBALS['conn'],$boardsql);
+                         while($comment = mysqli_fetch_assoc($result) ) {
                     ?>  
                     <tbody>
                       <tr>
-                        <th scope="row"><?php echo $category['categoryID']; ?></th>
-                        <td><?php echo $category['categoryName']; ?></td>
+                        <th scope="row"><?php echo $comment['commentID']; ?></th>
+                        <td><?php echo $comment['boardID']; ?></td>
+                        <td><?php echo $comment['userID']; ?></td>
                         <td>
-                          <a href="adminManageCategory.php?categoryID=<?php echo $category['categoryID']; ?>&u=1" class="btn btn-sm btn-primary">
+                        <textarea class="form-control" 
+                        id="floatingTextarea2" disabled style="height: 25px"><?php echo $comment['commentDetail']; ?></textarea>
+                            
+                        </td>
+                        <td>
+                            <?php $date=date_create($comment['commentDate']);
+                                    echo date_format($date,"d/m/Y"); ?>
+                        </td>
+                        <td><?php echo $comment['commentTime']; ?></td>
+                        <td>
+                          <a href="editBoard.php?boardID=<?php echo $board['boardID']; ?>" class="btn btn-sm btn-primary">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
                             <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
                             <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
                             </svg>
                           </a>
-                          <a href="adminManageCategory.php?categoryID=<?php echo $category['categoryID']; ?>&d=1" class="btn btn-sm  btn-danger">
+                          <a href="manageUser.php?userID=<?php echo $board['userID']; ?>&d=1" class="btn btn-sm  btn-danger">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
                               <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
                               <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
@@ -100,6 +99,15 @@
                     </tbody>
                     <?php  } ?>
                   </table>
+                  <nav aria-label="Page navigation example text-dark">
+                    <ul class="pagination">
+                      <li class="page-item"><a class="page-link text-dark" href="#">Previous</a></li>
+                      <li class="page-item"><a class="page-link text-dark" href="#">1</a></li>
+                      <li class="page-item"><a class="page-link text-dark" href="#">2</a></li>
+                      <li class="page-item"><a class="page-link text-dark" href="#">3</a></li>
+                      <li class="page-item"><a class="page-link text-dark" href="#">Next</a></li>
+                    </ul>
+                </nav>  
            </div>
         </div>
         <div class="row text-center">
@@ -109,6 +117,7 @@
             </div>
             <div class="col-sm-4"></div>
         </div>
+        
     </div>
 </body>
 </html>

@@ -12,6 +12,7 @@
     <?php 
             require 'db/db_connect.php';
             connect();
+            
             $sql1 = 'SELECT * FROM category';
             $result1 = mysqli_query($GLOBALS['conn'],$sql1);
             if(isset($_POST['categoryID'])) {

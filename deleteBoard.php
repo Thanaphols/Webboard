@@ -20,18 +20,31 @@
                 $preparedeBoardSQL->execute();
                 $preparedeBoardSQL->close();
                 header("refresh:0; url=myboard.php");
-            }else{
+            }else if(@$_GET['admin']==1){
+               $_SESSION['delete'] = true;
+               $decommnetSQL = 'DELETE comment FROM comment JOIN board ON comment.boardID = board.boardID WHERE board.boardID = ?  ';
+               $preparedecommnetSQL = $GLOBALS['conn']->prepare($decommnetSQL);
+               $preparedecommnetSQL->bind_param("i",$boardID);
+               $preparedecommnetSQL->execute();
+               $preparedecommnetSQL->close();
+               $deBoardSQL = 'DELETE FROM board WHERE boardID = ? ; ';
+               $preparedeBoardSQL = $GLOBALS['conn']->prepare($deBoardSQL);
+               $preparedeBoardSQL->bind_param("i",$boardID);
+               $preparedeBoardSQL->execute();
+               $preparedeBoardSQL->close();
+               header("refresh:0; url=adminBoard.php");
+            } else {
                 $_SESSION['delete'] = true;
-                // $decommnetSQL = 'DELETE comment FROM comment JOIN board ON comment.boardID = board.boardID WHERE board.boardID = ?  ';
-                // $preparedecommnetSQL = $GLOBALS['conn']->prepare($decommnetSQL);
-                // $preparedecommnetSQL->bind_param("i",$boardID);
-                // $preparedecommnetSQL->execute();
-                // $preparedecommnetSQL->close();
-                // $deBoardSQL = 'DELETE FROM board WHERE boardID = ? ; ';
-                // $preparedeBoardSQL = $GLOBALS['conn']->prepare($deBoardSQL);
-                // $preparedeBoardSQL->bind_param("i",$boardID);
-                // $preparedeBoardSQL->execute();
-                // $preparedeBoardSQL->close();
+                $decommnetSQL = 'DELETE comment FROM comment JOIN board ON comment.boardID = board.boardID WHERE board.boardID = ?  ';
+                $preparedecommnetSQL = $GLOBALS['conn']->prepare($decommnetSQL);
+                $preparedecommnetSQL->bind_param("i",$boardID);
+                $preparedecommnetSQL->execute();
+                $preparedecommnetSQL->close();
+                $deBoardSQL = 'DELETE FROM board WHERE boardID = ? ; ';
+                $preparedeBoardSQL = $GLOBALS['conn']->prepare($deBoardSQL);
+                $preparedeBoardSQL->bind_param("i",$boardID);
+                $preparedeBoardSQL->execute();
+                $preparedeBoardSQL->close();
                  header("refresh:0; url=index.php");
             }
     ?>
