@@ -26,7 +26,8 @@
                     $deleteSQL = 'DELETE FROM category WHERE categoryID = ?';
                     $preparedeleteSQL = $GLOBALS['conn']->prepare($deleteSQL);
                     $preparedeleteSQL->bind_param("i",$categoryID);
-                    $preparedeleteSQL->execute();
+                     $preparedeleteSQL->execute();
+                     $preparedeleteSQL->close();
                     header('refresh:0; url=adminCategory.php');
         }else{
             
@@ -37,7 +38,7 @@
         $preparecatgorySQL->execute();
         $result = $preparecatgorySQL->get_result();
         $category = $result->fetch_assoc();
-
+        $preparecatgorySQL->close();
         if(isset($_POST['categoryName'])) {
             if($_POST['categoryName']==''){
                 echo ' <script>
@@ -58,6 +59,7 @@
                 $prepareupdateCategorySQL = $GLOBALS['conn']->prepare($updateCategorySQL);
                 $prepareupdateCategorySQL->bind_param("si",$categoryName,$categoryID);
                 $prepareupdateCategorySQL->execute();
+                $prepareupdateCategorySQL->close();
                 echo ' <script>
                                     $(function() {
                                         Swal.fire({

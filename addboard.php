@@ -16,6 +16,7 @@
             $sql1 = 'SELECT * FROM category';
             $result1 = mysqli_query($GLOBALS['conn'],$sql1);
             if(isset($_POST['categoryID'])) {
+                // check input empty
                     if($_POST['categoryID']==''|| $_POST['boardHeader']=='' || $_POST['boardBody']==''){
                         echo ' <script>
                         $(function() {
@@ -30,22 +31,41 @@
                         });
                     </script>';
                     }else{
+                        
+                        $boardHeader = $_POST['boardHeader'];
+                        $boardBody = $_POST['boardBody'];
+                        $userID = $_SESSION['userID'];
+                        $categoryID = $_POST['categoryID'];
+                        $boardImage = $_FILES['boardImage']['name'];
+                        // Add board with Images
                         if($_FILES["boardImage"]["tmp_name"]!=''){
-                            
-                            // if(is_uploaded_file($_FILES['imgStat']['tmp_name'])){
-                            //     if(($_FILES['imgStat']['type']=='image/jpeg') OR
-                            //        ($_FILES['imgStat']['type']=='image/jpeg')){
-                            //    move_uploaded_file($_FILES['imgStat']['tmp_name'],
-                            //            'img/stat_img/'.$_FILES['imgStat']['name']);
-                            //    $SQL = 'INSERT INTO statuses (o_id,stat_text,stat_img,stat_date,f_id)'
-                            //            . ' VALUES ("'.$_SESSION['user_id'].'","'.$txt.'",'
-                            //            . ' "img/stat_img/'.$_FILES['imgStat']['name'].'","'.$stat_date.'","'.$_SESSION['user_id'].'" ) ';
-                            //     } 
-                            // }else{
-                            //     $SQL = 'INSERT INTO statuses (o_id,stat_text,stat_date,f_id)'
-                            //             . ' VALUES ("'.$_SESSION['user_id'].'","'.$txt.'","'.$stat_date.'","'.$_SESSION['user_id'].'") ';
-                            // }
+                            if(is_uploaded_file($_FILES['boardImage']['tmp_name'])){
+                                if(($_FILES['boardImage']['type']=='image/jpeg') ||
+                                   ($_FILES['boardImage']['type']=='image/png')){
+                               move_uploaded_file($_FILES['boardImage']['tmp_name'],
+                                       'img/boardImg/'.$_FILES['boardImage']['name']);
+                                       $updateImageSQL = 'INSERT INTO board (boardHeader,boardBody,userID,categoryID,boardImage,boardDate,boardTime) VALUES 
+                                       (? , ?, ?, ?, ?,  CURRENT_DATE, CURRENT_TIME) ';
+                                $prepareuodateImageSQL = $GLOBALS['conn']->prepare($updateImageSQL);
+                                $prepareuodateImageSQL->bind_param("ssiis",$boardHeader,$boardBody,$userID,$categoryID,$boardImage);
+                                $prepareuodateImageSQL->execute();
+                                } else{
+                                    echo ' <script>
+                                    $(function() {
+                                        Swal.fire({
+                                            showCancelButton: true,
+                                            showConfirmButton: false,
+                                            cancelButtonText: "ปิด",
+                                            title: "เกิดข้อผิดพลาด",
+                                            text: "กรุณาใช้ไฟล์รูป jpeg หรือ png",
+                                            icon: "error"
+                                        });
+                                    });
+                                    </script>';
+                                }
+                            }
                         }else{
+                             // Add board without Images
                             $sql2 = 'INSERT INTO board (boardHeader,boardBody,userID,categoryID,boardDate,boardTime) VALUES 
                             ("'.$_POST['boardHeader'].'",
                             "'.$_POST['boardBody'].'",

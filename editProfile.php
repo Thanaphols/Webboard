@@ -29,7 +29,9 @@
             }
             
             if(isset($_POST['firstName']) || isset($_POST['lastName']) || isset($_POST['email']) ){
-               
+                $newfirstName = $_POST['firstName'];
+                $newlastName = $_POST['lastName'];
+                $newImage = $_FILES['userImage']['name'];
                 if($_POST['firstName']=='' || $_POST['lastName']==''){
                     echo ' <script>
                             $(function() {
@@ -43,11 +45,33 @@
                                 });
                             });
                             </script>';
+                }else if($_FILES['userImage']["tmp_name"]!=''){
+                         if(is_uploaded_file($_FILES['userImage']['tmp_name'])){
+                                if(($_FILES['userImage']['type']=='image/jpeg') ||
+                                   ($_FILES['userImage']['type']=='image/png')){
+                               move_uploaded_file($_FILES['userImage']['tmp_name'],
+                                       'img/userImg/'.$_FILES['userImage']['name']);
+                                $updateImageSQL = 'UPDATE users SET firstName = ? , lastName = ? , userImage = ? WHERE userID = ? ';
+                                $prepareuodateImageSQL = $GLOBALS['conn']->prepare($updateImageSQL);
+                                $prepareuodateImageSQL->bind_param("sssi",$newfirstName,$newlastName,$newImage,$loginUserID);
+                                $prepareuodateImageSQL->execute();
+                                $prepareuodateImageSQL->close();
+                                } else{
+                                    echo ' <script>
+                                    $(function() {
+                                        Swal.fire({
+                                            showCancelButton: true,
+                                            showConfirmButton: false,
+                                            cancelButtonText: "ปิด",
+                                            title: "เกิดข้อผิดพลาด",
+                                            text: "กรุณาใช้ไฟล์รูป jpeg หรือ png",
+                                            icon: "error"
+                                        });
+                                    });
+                                    </script>';
+                                }
+                            }
                 }else{
-                    $newfirstName = $_POST['firstName'];
-                    $newlastName = $_POST['lastName'];
-                    // $sql = 'UPDATE users SET firstName = "'.$_POST['firstName'].'" , lastName = "'.$_POST['lastName'].'" WHERE userID = '.$_SESSION['userID'].' ';
-                    // $result = mysqli_query($GLOBALS['conn'], $sql);
                     $updateUserSQL = 'UPDATE users SET firstName = ? , lastName = ? WHERE userID = ?';
                     $prepareUpdateUser = $GLOBALS['conn']->prepare($updateUserSQL);
                     $prepareUpdateUser->bind_param("ssi",$newfirstName,$newlastName,$loginUserID);
@@ -76,7 +100,7 @@
     <?php require 'req/navbar.php' ?>
 
     <div class="container-fluid mt-5 mb-2">
-    <form method="post">
+    <form method="post" enctype="multipart/form-data">
         <div class="row mt-4">
             <div class="col-lg-4 "> 
             </div>
@@ -113,6 +137,10 @@
                                 <div class="col-sm-9 ">
                                 <input type="text"  class="form-control " id="lastName" name="lastName"  value="<?php echo $lastName; ?>"  >
                                 </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="formFileSm" class="form-label">เลือกรูปภาพ *ไม่ใส่ก็ได้*</label>
+                                <input class="form-control form-control-sm" id="userImage" name="userImage" type="file">
                             </div>
 
                             <div class="mb-3 row">

@@ -1,7 +1,7 @@
 <?php 
   if(isset($_SESSION['userID'])) {
     $userID = $_SESSION['userID'];
-    $sql = 'SELECT email,userRole,firstName,userRole FROM users WHERE userID = ? ';
+    $sql = 'SELECT email,userRole,firstName,userRole,userImage FROM users WHERE userID = ? ';
     $prepareUser = $GLOBALS['conn']->prepare($sql);
     $prepareUser->bind_param("i",$userID);
     $prepareUser->execute();

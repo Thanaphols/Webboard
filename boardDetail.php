@@ -28,7 +28,7 @@
                 unset($_SESSION['delete']);
             }
             $boardID = $_GET['boardID'];
-            $boardSql = 'SELECT board.boardHeader, board.boardBody,board.userID AS userBoardID, board.categoryID,board.boardDate,board.boardTime ,
+            $boardSql = 'SELECT board.boardHeader, board.boardBody,board.userID AS userBoardID, board.categoryID,board.boardImage,board.boardDate,board.boardTime ,
                     users.firstName AS userBoardFirstName , users.lastName AS userBoardLastName ,
                     category.categoryName 
                     FROM board INNER JOIN users ON users.userID = board.userID AND board.boardID = ? 
@@ -112,11 +112,22 @@
                             <label for="email" class="col-sm-3 col-form-label text-while">ห้วข้อบอร์ด</label>
                                 <h5 class="text-start"><?php echo $board['boardHeader'] ?></h5>
                             </div>
+                            <?php if($board['boardImage']!=null) { ?>
+                            <div class="mb-3 row">
+                                <div class="col-sm-4"><label for="img" class="col-sm-3 col-form-label text-while">รูปภาพ</label></div>
+                                <div class="col-sm-4">
+                                
+                                <img src="img/boardImg/<?php echo $board['boardImage']  ?>" width="200px" height="200px" class="img-fluid mt-2 mb-2" alt="...">
+                                </div>
+                                <div class="col-sm-4"></div>
+                           
+                            </div>
+                            <?php } ?>
                             <div class="mb-3 row">
                                 <label for="userPassword" class="col-sm-3 col-form-label" >เนื้อหาบอร์ด</label>
                                 <div class="col-sm-12">
                                 <span disabled class="form-control" name="boardBody" id="boardBody" diabled  
-                                placeholder="Enter Board Body"><?php echo $board['boardBody']; ?></span>
+                                placeholder="Enter Board Body"><?php echo nl2br(htmlspecialchars($board['boardBody'])); ?></span>
                                 </div>
                             </div>
                             <div class=" mb-3 ">

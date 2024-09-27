@@ -21,6 +21,7 @@
                  }else if($_SESSION['userID'] != $_GET['userID'] && $_SESSION['userRole'] != 1 ){
                     header( "refresh:0; url=boardDetail.php?boardID= $boardID" );
                  }
+                 // Gete commentDetail Data
                  $commentSQL = 'SELECT * FROM comment WHERE commentID = ? AND userID = ? ' ;
                  $preparecommentSQL = $GLOBALS['conn']->prepare($commentSQL);
                  $preparecommentSQL->bind_param("ii",$commentID,$userID);
@@ -28,6 +29,7 @@
                  $result = $preparecommentSQL->get_result();
                  $data = $result->fetch_assoc();
                  $preparecommentSQL->close();
+                 
                  if(isset($_POST['editcommentDetail'])){
                     $commentDetail = $_POST['editcommentDetail'];
                     if($_POST['editcommentDetail']==''){
@@ -61,7 +63,12 @@
                         });
                     </script>';
                     $prepareeditcommnetSQL->close();
-                    header("refresh:2; url=boardDetail.php?boardID= $boardID");
+                    if(@$_GET['admin']==1) {
+                        header("refresh:2; url=adminComment.php");
+                    }else{
+                        header("refresh:2; url=boardDetail.php?boardID= $boardID");
+                    }
+                    
                     }
                  }
 

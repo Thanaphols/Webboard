@@ -79,6 +79,7 @@
                             $prepareupdateSQL = $GLOBALS['conn']->prepare($updateSQL);
                             $prepareupdateSQL->bind_param("sssi",$email,$firstName,$lastName,$userID);
                             $prepareupdateSQL->execute();
+                            $prepareupdateSQL->close()
                             echo ' <script>
                                         $(function() {
                                             Swal.fire({
