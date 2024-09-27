@@ -84,10 +84,10 @@ connect();
                     <div class="col-sm-6 border shadow-sm mb-2">
                         <?php if($data['boardImage']!=null) { ?>
                         <div class="row">
-                            <div class="col-sm-4">
+                            <div class="col-sm-3">
                             <img src="img/boardImg/<?php echo $data['boardImage']  ?>" class="img-fluid mt-2 mb-2" alt="...">
                             </div>
-                            <div class="col-sm-8">
+                            <div class="col-sm-9">
                             <h5 class="text-start mt-2 mb-1"><?php echo $data['boardHeader'] ?> 
                                 <?php if(@$_SESSION['userID'] == $userID ||  @$_SESSION['userRole'] == 1 ) { ?>
                                 <a href="editBoard.php?boardID=<?php echo $data['boardID']; ?>" class="btn btn-sm btn-outline-primary ">

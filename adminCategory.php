@@ -42,11 +42,11 @@
         <div class="col-sm-4">
             
         </div>
-        <div class="col-sm-4 text-center"><h5>ข้อมูลหมวดหมู่ <a href="adminAddCategory.php" class="btn btn-primary">เพิ่มหมวดหมู๋</a> </h5> 
+        <div class="col-sm-4 text-center"><h5>ข้อมูลหมวดหมู่ <a href="adminAddCategory.php" class="btn btn-sm btn-primary">เพิ่มหมวดหมู๋</a> </h5> 
     </div>
         <div class="col-sm-4 text-end"></div>
     </div>
-        <div class="row  mt-2 mb-2">
+        <div class="row  mb-2">
             <div class="col-sm-2">
             <div class="row mt-2 ">
               <div class="col-sm-1"></div>

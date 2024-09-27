@@ -12,25 +12,40 @@
     <?php 
             require 'db/db_connect.php';
             connect();
-            $loginUserID = $_SESSION['userID'];
-            $DataUserLoginSql = 'SELECT * FROM users WHERE userID = ? ';
+           
+            if(@$_GET['profile']){
+                $profileID = $_GET['profile'];
+            }else{
+                $profileID = $_SESSION['userID'];
+            }
+            
+            $DataUserLoginSql = 'SELECT users.* ,COUNT(board.userID) AS boardtotal 
+            FROM users 
+            LEFT JOIN board ON board.userID = users.userID 
+            WHERE users.userID = ? GROUP BY users.userID';
             $prepareDataUserLogin = $GLOBALS['conn']->prepare($DataUserLoginSql); 
-            $prepareDataUserLogin->bind_param("i",$loginUserID);
+            $prepareDataUserLogin->bind_param("i",$profileID);
             $prepareDataUserLogin->execute();
             $result = $prepareDataUserLogin->get_result();
+            
             if($result->num_rows > 0 ){
                 $user = $result->fetch_assoc();
-                $userID = $user['userID'];
+                $boardtotal = $user['boardtotal'];
+                
+                $userID = $user['userID'];  
                 $email = $user['email'];
                 $firstName = $user['firstName'];
                 $lastName = $user['lastName'];
                 $userDate = $user['userDate'];
                 $userTime = $user['userTime'];
+                $userImage = $user['userImage'];
+            }else{
+                echo 'Nodata';
             }
     ?>
 </head>
 <body>
-    <?php require 'req/navbar.php' ?>
+    <?php require 'req/navbar.php';  ?>
 
     <div class="container-fluid mt-5 mb-2">
         <div class="row mt-4">
@@ -40,44 +55,65 @@
             <div class="col-lg-4">
                 <div class="card ">
                     <div class="card-body shadow-sm">
-                        <h5 class="card-title text-center ">โปรไฟล์ของฉัน</h5>
+                        <h5 class="card-title text-center ">
+                        <?php if($_SESSION['userID'] == $profileID ) { ?> 
+                        โปรไฟล์ของฉัน
+                        <?php }else{ ?>
+                            โปรไฟล์ของ <?php echo $firstName ?>
+                        <?php } ?>
+                        </h5>
+                        <?php if($userImage!=null) { ?>
+                        <div class="row">
+                        <img src="img/userImg/<?php echo $userImage  ?>" class="img-fluid mt-2 mb-2" alt="...">
+                        </div>
+                        <?php } ?>
                         <p class="card-text form-inline">
                             <div class="mb-3 row">
-                            <label for="email" class="col-sm-3  col-form-label text-while">user ID</label>
-                                <div class="col-sm-9 ">
-                                <span class="input-group-text"> 
+                            <span  class="col-sm-4  text-while">หมายเลขสมาชิก</span>
+                                <div class="col-sm-8 ">
+                                <span > 
                                     <?php  echo $userID; ?>
                                 </span>
                                 </div>
                             </div>
                             <div class="mb-3 row">
-                            <label for="email" class="col-sm-3  col-form-label text-while">อีเมล</label>
-                                <div class="col-sm-9 ">
-                                <input type="email"  class="form-control " id="email" name="email" value="<?php echo $email; ?>" disabled >
+                            <span  class="col-sm-4  text-while">อีเมล</span>
+                                <div class="col-sm-8 ">
+                                <span  ><?php echo $email; ?> </span>
                                 </div>
                             </div>
 
                             <div class="mb-3 row">
-                            <label for="firstName" class="col-sm-3 col-form-label text-while">ชื่อจริง</label>
-                                <div class="col-sm-9">
-                                <input type="text"  class="form-control " id="firstName" name="firstName" value="<?php echo $firstName; ?>" disabled >
+                            <span  class="col-sm-4  text-while">ชื่อ</span>
+                                <div class="col-sm-8">
+                                <span><?php echo $firstName; ?></span>
                                 </div>
                             </div>
 
                             <div class="mb-3 row">
-                            <label for="lastName" class="col-sm-3 col-form-label text-while">นามสกุล</label>
-                                <div class="col-sm-9 ">
-                                <input type="text"  class="form-control " id="lastName" name="lastName"  value="<?php echo $lastName; ?>" disabled >
+                            <span  class="col-sm-4  text-while">นามสกุล</span>
+                                <div class="col-sm-8">
+                                <span><?php echo $lastName; ?></span>
                                 </div>
                             </div>
 
+                            
                             <div class="mb-3 row">
-                            <label for="lastName" class="col-sm-3 col-form-label text-while">วัน / เวลา ที่สมัคร</label>
-                                <div class="col-sm-9 ">
-                                <span class="input-group-text"> <?php echo $userDate, ' ' , $userTime;  ?>1</span>
+                            <span  class="col-sm-4  text-while">นามสกุล</span>
+                                <div class="col-sm-8">
+                                <span> <?php $date=date_create($userDate);
+                                        echo date_format($date,"d/m/Y"); ?></span>
                                 </div>
                             </div>
+                            <div class="mb-3 row">
+                            <span  class="col-sm-4  text-while">นามสกุล</span>
+                                <div class="col-sm-8">
+                                <span><?php echo $userTime; ?></span>
+                                </div>
+                            </div>
+                            
                             <div class="row ">
+                            <?php if($_SESSION['userID'] == $profileID ) { ?>
                                 <div class="col-lg-2"></div>
                                 <div class="col-lg-8"> 
                                     <a href="editProfile.php" class="btn btn-primary w-100" >
@@ -87,8 +123,9 @@
                                         </svg>
                                         แก้ไขข้อมูล
                                     </a>
-                            </div>
-                                   
+                                    
+                                     </div>
+                                     <?php } ?>
                                 <div class="col-lg-2"></div>
                             </div>
                             
@@ -98,7 +135,23 @@
             
             </div>
 
-            <div class="col-lg-4"> </div>
+            <div class="col-lg-4"> 
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">จำนวนบอร์ดทั้งหมดของ <?php echo $firstName ?>  = <?php echo $boardtotal  ?> </h5>
+                        <h5 class="card-title">จำนวนคอมเม้นทั้งหมดของ <?php echo $firstName ?>  = <?php 
+                        $countcommentSQL = 'SELECT count(*) as total FROM comment WHERE userID = ? ';
+                        $preparecountcommentSQL = $GLOBALS['conn']->prepare($countcommentSQL);
+                        $preparecountcommentSQL->bind_param("i",$profileID);
+                        $preparecountcommentSQL->execute();
+                        $result = $preparecountcommentSQL->get_result();
+                        $commenttotal = $result->fetch_assoc();
+                        $preparecountcommentSQL->close();
+                        echo $commenttotal['total'];
+                        ?> </h5>
+                    </div>
+                </div>
+            </div>
             
         </div>
     </div>

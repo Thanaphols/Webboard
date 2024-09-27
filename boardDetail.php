@@ -29,7 +29,7 @@
             }
             $boardID = $_GET['boardID'];
             $boardSql = 'SELECT board.boardHeader, board.boardBody,board.userID AS userBoardID, board.categoryID,board.boardImage,board.boardDate,board.boardTime ,
-                    users.firstName AS userBoardFirstName , users.lastName AS userBoardLastName ,
+                    users.firstName AS userBoardFirstName , users.lastName AS userBoardLastName , users.userImage ,
                     category.categoryName 
                     FROM board INNER JOIN users ON users.userID = board.userID AND board.boardID = ? 
                     INNER JOIN category  ON category.categoryID = board.categoryID  WHERE board.boardID = ? ' ;
@@ -138,7 +138,18 @@
                                 <label for="userPassword" class="col-sm-3 col-form-label" >
                                 </label>
                                 <div class="col-sm-12">
-                                <span >สมาชิกหมายเลข <?php echo $board['userBoardID'] ?> :  <?php echo $board['userBoardFirstName'].' '. $board['userBoardLastName'] ?> </span><br>
+                                <span >สมาชิกหมายเลข <?php echo $board['userBoardID'] ?> :  
+                                <a href="profile.php?profile=<?php echo $board['userBoardID'] ?>" class="text-decoration-none text-dark">
+                                <?php if($board['userImage']!=null) { ?>
+                                <img src="img/userImg/<?php echo $board['userImage'] ?>" width="30px" class="rounded-circle" height="30px" alt="">
+                                <?php } else { ?>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
+                                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+                                    <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
+                                    </svg>
+                                <?php } ?>
+                                <?php echo $board['userBoardFirstName'].' '. $board['userBoardLastName'] ?>
+                                </a> </span> <br>
                                 <span classs="card-text" >
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar-check" viewBox="0 0 16 16">
                                     <path d="M10.854 7.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 9.793l2.646-2.647a.5.5 0 0 1 .708 0"/>
@@ -271,7 +282,9 @@
                                 <span  class="form-control" name="boardBody" id="boardBody" diabled  
                                 placeholder="Enter Board Body"><?php echo $data['commentDetail']; ?></span>
                                 </div> <br>
-                                <p class="card-text mb-1"> หมายเลขสมาชิก :  <?php echo $data['userID']." คุณ ".$userData['firstName'].' '.$userData['lastName'];  ?>   </p>  
+                                <p class="card-text mb-1"> หมายเลขสมาชิก : 
+                                <a href="profile.php?profile=<?php echo $userID ?>" class="text-decoration-none text-dark">
+                                     <?php echo $data['userID']." คุณ ".$userData['firstName'].' '.$userData['lastName'];  ?>  </a> </p>  
                                 <span classs="card-text" >
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar-check" viewBox="0 0 16 16">
                                     <path d="M10.854 7.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 9.793l2.646-2.647a.5.5 0 0 1 .708 0"/>

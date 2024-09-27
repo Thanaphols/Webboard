@@ -30,7 +30,6 @@
                 $userID = $_GET['userID'];
                 
                 if(isset($_POST['email'])){
-                    
                     $email = $_POST['email'];
                     $firstName = $_POST['firstName'];
                     $lastName = $_POST['lastName'];
@@ -79,7 +78,7 @@
                             $prepareupdateSQL = $GLOBALS['conn']->prepare($updateSQL);
                             $prepareupdateSQL->bind_param("sssi",$email,$firstName,$lastName,$userID);
                             $prepareupdateSQL->execute();
-                            $prepareupdateSQL->close()
+                            $prepareupdateSQL->close();
                             echo ' <script>
                                         $(function() {
                                             Swal.fire({
