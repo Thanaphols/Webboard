@@ -5,14 +5,35 @@
 require 'db/db_connect.php';
 connect();
 $board['img']='';
-    $sql = 'SELECT firstName,lastName FROM users WHERE userID = '.$_SESSION['userID'].' ';
-    $data = getData($sql);
-    $boardSql = 'SELECT * FROM board WHERE userID = '.$_SESSION['userID'].' ';
-    //echo $boardSql;
-    $boardResult = mysqli_query($GLOBALS['conn'],$boardSql);
+if(empty($_GET) AND $_SESSION['userID'] == ''){
+    header('refresh:0;url=index.php');
+}
+    if(@$_GET['userID']!='' ){
+        $userID = $_GET['userID'];
+       
+    }else{
+        $userID = $_SESSION['userID'];
+    }
+    
+    $sql = 'SELECT firstName,lastName FROM users WHERE userID = ?  ';
+    $preparesql = $GLOBALS['conn']->prepare($sql);
+    $preparesql->bind_param("i",$userID);
+    $preparesql->execute();
+    $result= $preparesql->get_result();
+    $data = $result->fetch_assoc();
+
+    $boardSql = 'SELECT * FROM board WHERE userID = ? ';
+    $prepareboardSQL = $GLOBALS['conn']->prepare($boardSql);
+    $prepareboardSQL->bind_param("i", $userID);
+    $prepareboardSQL->execute();
+    $boardResult=$prepareboardSQL->get_result();
+    $countMyBoard = 0;
+    while ($boardResult->num_rows > 0 && $countMyBoard < $boardResult->num_rows){
+        $countMyBoard++;
+    } 
+    $prepareboardSQL->close();
     $categorySQL = 'SELECT * FROM category';
     $result1 = mysqli_query($GLOBALS['conn'],$categorySQL);
-    $countMyBoard = countRow('board','userID',$_SESSION['userID']);
 ?>
     <meta charset="UTF-8">
     <link href="css/style.css" rel="stylesheet" type="text/css"/>
@@ -22,9 +43,29 @@ $board['img']='';
     <title>Webboard</title>
 </head>
 <body>
-    <?php require 'req/navbar.php' ?>
+    <?php require 'req/navbar.php' ; ?>
     <div class="container-fluid  mt-3 mb-2">
-    <div class="row">
+                <div class="row">
+                    <div class="col-sm-2"></div>
+                    <div class="col-sm-8 row">
+                    <?php while($cate = $result1->fetch_assoc()){ ?>
+                    <div class="col-sm-3">
+                    <a href="myboardCategory.php?userID=<?php if(@$_GET['userID'] != '') {
+                    echo $_GET['userID'];     } else{ echo $userID; }
+                    ?>&categoryID=<?php echo $cate['categoryID'] ?>" class="text-decoration-none text-dark" name="category<?php echo $cate['categoryID'] ?>"  > 
+                    <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title"></h5>
+                                    <p class="card-text text-center"><?php echo $cate['categoryName'] ?></p>
+                                </div>
+                            </div>
+                    </a>
+                    </div>
+                    <?php } ?> 
+                    </div>
+                    <div class="col-sm-2"></div>
+                </div>
+    <div class="row mt-2">
         <div class="col-sm-4"></div>
         <div class="col-sm-4 text-center"><h5>บอร์ดทั้งหมดของคุณ <?php echo $data['firstName']; echo ' '; echo $data['lastName']; ?></h5>
     </div>
@@ -42,37 +83,57 @@ $board['img']='';
                         $commnet = countROW('comment','boardID',$data['boardID']);
                         ?>
                     <div class="col-sm-6 border shadow-sm mb-2">
-                        <?php if(isset($board['img'])==null) { ?>
+                    <?php if($data['boardImage']!=null) { ?>
                         <div class="row">
-                            <div class="col-sm-4">
-                            <img src="img/noimg.jpg" class="img-fluid mt-2 mb-2" alt="...">
+                            <div class="col-sm-3">
+                            <img src="img/boardImg/<?php echo $data['boardImage']  ?>" class="img-fluid mt-2 mb-2" alt="...">
                             </div>
-                            <div class="col-sm-8">
-                                <h5 class="text-start mt-2 mb-1"><?php echo $data['boardHeader'] ?></h5>
-                                <p class="text-start mb-1">Category : <?php echo $category['categoryName']; ?></p>
-                                <p></p>
+                            <div class="col-sm-9">
+                            <h5 class="text-start mt-2 mb-1"><?php echo $data['boardHeader'] ?> 
+                                <?php if(@$_SESSION['userID'] == $userID ||  @$_SESSION['userRole'] == 1 ) { ?>
+                                <a href="editBoard.php?boardID=<?php echo $data['boardID']; ?>" class="btn btn-sm btn-outline-primary ">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                    <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                                    <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+                                    </svg>
+                                </a>
+                                    <button   type="button" data-bs-toggle="modal" data-bs-target="#deboard<?php echo $data['boardID'] ?>" class="btn btn-sm btn-outline-danger ">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+                                            <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                                        </svg>
+                                    </button>
+                                <?php } ?>
+                                </h5>
+                                <p class="text-start mb-1">Category : <?php echo $category['categoryName']; ?>
+                            </p>
                                 <div class="row">
                                     <div class="col-sm-5"><p>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar-check" viewBox="0 0 16 16">
-                                    <path d="M10.854 7.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 9.793l2.646-2.647a.5.5 0 0 1 .708 0"/>
-                                    <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar-check" viewBox="0 0 16 16">
+                                        <path d="M10.854 7.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 9.793l2.646-2.647a.5.5 0 0 1 .708 0"/>
+                                        <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/>
                                     </svg> 
-                                    <?php echo $data['boardDate']; ?>
+
+                                    <?php $date=date_create($data['boardDate']);
+                                        echo date_format($date,"d/m/Y"); ?>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16">
                                         <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/>
                                         <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"/>
                                     </svg>
                                     <?php echo $data['boardTime']; ?>
-                                </p></div>
-                                <div class="col-sm-2"></div>
-                                    <div class="col-sm-5 mt-4 text-end">
+                                </p>
+                                </div>
+                                <div class="col sm-2"></div>
+                                    <div class="col-sm-5 text-end">
                                 <p>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chat-left-text" viewBox="0 0 16 16">
-                                        <path d="M14 1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4.414A2 2 0 0 0 3 11.586l-2 2V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12.793a.5.5 0 0 0 .854.353l2.853-2.853A1 1 0 0 1 4.414 12H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"/>
-                                        <path d="M3 3.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5M3 6a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9A.5.5 0 0 1 3 6m0 2.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5"/>
-                                    </svg> Comment <?php echo $commnet; ?>
-                                </p></div>
+                                    <path d="M14 1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4.414A2 2 0 0 0 3 11.586l-2 2V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12.793a.5.5 0 0 0 .854.353l2.853-2.853A1 1 0 0 1 4.414 12H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"/>
+                                    <path d="M3 3.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5M3 6a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9A.5.5 0 0 1 3 6m0 2.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5"/>
+                                </svg> Comment <?php echo $commnet; ?>
+                                </p>
                                 </div>
+                                </div>
+                                <a href="boardDetail.php?boardID=<?php echo $data['boardID']  ?>" class="btn btn-outline-primary mb-2">ดูรายละเอียด</a>
                             </div>
                         </div>
                         <?php } else { ?>

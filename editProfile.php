@@ -56,6 +56,19 @@
                                 $prepareuodateImageSQL->bind_param("sssi",$newfirstName,$newlastName,$newImage,$loginUserID);
                                 $prepareuodateImageSQL->execute();
                                 $prepareuodateImageSQL->close();
+                                echo ' <script>
+                            $(function() {
+                                Swal.fire({
+                                    showCancelButton: true,
+                                    showConfirmButton: false,
+                                    cancelButtonText: "ปิด",
+                                    title: "แก้ไขข้อมูลสำเร็จ",
+                                    text: "กรุณารอสักครู่ !",   
+                                    icon: "success"
+                                });
+                            });
+                            </script>';
+                            header('refresh:2 ; url=profile.php');
                                 } else{
                                     echo ' <script>
                                     $(function() {
@@ -76,6 +89,7 @@
                     $prepareUpdateUser = $GLOBALS['conn']->prepare($updateUserSQL);
                     $prepareUpdateUser->bind_param("ssi",$newfirstName,$newlastName,$loginUserID);
                     $result = $prepareUpdateUser->execute();
+                    $prepareUpdateUser->close();
                     echo ' <script>
                             $(function() {
                                 Swal.fire({
@@ -89,7 +103,7 @@
                             });
                             </script>';
                             header('refresh:2 ; url=profile.php');
-                           $prepareUpdateUser->close();
+                           
                 }
             }
             

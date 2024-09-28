@@ -12,7 +12,6 @@
     <?php 
             require 'db/db_connect.php';
             connect();
-           
             if(@$_GET['profile']){
                 $profileID = $_GET['profile'];
             }else{
@@ -27,6 +26,7 @@
             $prepareDataUserLogin->bind_param("i",$profileID);
             $prepareDataUserLogin->execute();
             $result = $prepareDataUserLogin->get_result();
+            $prepareDataUserLogin->close();
             
             if($result->num_rows > 0 ){
                 $user = $result->fetch_assoc();
@@ -56,7 +56,7 @@
                 <div class="card ">
                     <div class="card-body shadow-sm">
                         <h5 class="card-title text-center ">
-                        <?php if($_SESSION['userID'] == $profileID ) { ?> 
+                        <?php if(@$_SESSION['userID'] == $profileID ) { ?> 
                         โปรไฟล์ของฉัน
                         <?php }else{ ?>
                             โปรไฟล์ของ <?php echo $firstName ?>
@@ -64,7 +64,9 @@
                         </h5>
                         <?php if($userImage!=null) { ?>
                         <div class="row">
-                        <img src="img/userImg/<?php echo $userImage  ?>" class="img-fluid mt-2 mb-2" alt="...">
+                        <div class="col-sm-3"></div>
+                        <div class="col-sm-6"> <img src="img/userImg/<?php echo $userImage  ?>" class="img-fluid rounded-circle mt-2 mb-2" alt="..."></div>
+                        <div class="col-sm-3"></div>
                         </div>
                         <?php } ?>
                         <p class="card-text form-inline">
@@ -99,21 +101,21 @@
 
                             
                             <div class="mb-3 row">
-                            <span  class="col-sm-4  text-while">นามสกุล</span>
+                            <span  class="col-sm-4  text-while">วันที่สมัครสมาชิก</span>
                                 <div class="col-sm-8">
                                 <span> <?php $date=date_create($userDate);
                                         echo date_format($date,"d/m/Y"); ?></span>
                                 </div>
                             </div>
                             <div class="mb-3 row">
-                            <span  class="col-sm-4  text-while">นามสกุล</span>
+                            <span  class="col-sm-4  text-while">เวลาที่สมัครสมาชิก</span>
                                 <div class="col-sm-8">
                                 <span><?php echo $userTime; ?></span>
                                 </div>
                             </div>
                             
                             <div class="row ">
-                            <?php if($_SESSION['userID'] == $profileID ) { ?>
+                            <?php if(@$_SESSION['userID'] == $profileID ) { ?>
                                 <div class="col-lg-2"></div>
                                 <div class="col-lg-8"> 
                                     <a href="editProfile.php" class="btn btn-primary w-100" >
@@ -138,7 +140,11 @@
             <div class="col-lg-4"> 
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">จำนวนบอร์ดทั้งหมดของ <?php echo $firstName ?>  = <?php echo $boardtotal  ?> </h5>
+                        <h5 class="card-title"> 
+                            <a href="myboard.php?userID=<?php echo $profileID ?>" class="text-dark text-decoration-none" >
+                            จำนวนบอร์ดทั้งหมดของ <?php echo $firstName ?>  = <?php echo $boardtotal  ?> 
+                            </a>
+                        </h5>
                         <h5 class="card-title">จำนวนคอมเม้นทั้งหมดของ <?php echo $firstName ?>  = <?php 
                         $countcommentSQL = 'SELECT count(*) as total FROM comment WHERE userID = ? ';
                         $preparecountcommentSQL = $GLOBALS['conn']->prepare($countcommentSQL);

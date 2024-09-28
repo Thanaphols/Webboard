@@ -61,6 +61,7 @@
     ?>
 </head>
 <body>
+    
     <?php require 'req/navbar.php' ?>
     <div class="container-fluid mt-5 mb-2 ">
     <form method="post">
@@ -101,5 +102,9 @@
             </form>
         </div>
     </div>
+    
+    
+    <?php require 'req/footer.php' ?>
+    
     </body>
 </html>

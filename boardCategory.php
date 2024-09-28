@@ -72,7 +72,15 @@ connect();
                     <?php while($cate = $category->fetch_assoc()){ ?>
                     <div class="col-sm-3">
 
-                    <a href="boardCategory.php?categoryID=<?php echo $cate['categoryID'] ?>" class="btn btn-primary w-100" name="category<?php echo $cate['categoryID'] ?>"  ><?php echo $cate['categoryName'] ?></a>
+                    <a href="boardCategory.php?categoryID=<?php echo $cate['categoryID'] ?>" class="text-decoration-none text-dark" name="category<?php echo $cate['categoryID'] ?>"  > 
+                    <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title"></h5>
+                                    <p class="card-text text-center"><?php echo $cate['categoryName'] ?></p>
+                                </div>
+                            </div>
+
+                    </a>
                     </div>
                     <?php } ?>
                     </form>

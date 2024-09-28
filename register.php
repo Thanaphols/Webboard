@@ -154,5 +154,6 @@
             </form>
         </div>
     </div>
+    <?php require 'req/footer.php' ?>
     </body>
 </html>

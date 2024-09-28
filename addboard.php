@@ -49,6 +49,19 @@
                                 $prepareuodateImageSQL = $GLOBALS['conn']->prepare($updateImageSQL);
                                 $prepareuodateImageSQL->bind_param("ssiis",$boardHeader,$boardBody,$userID,$categoryID,$boardImage);
                                 $prepareuodateImageSQL->execute();
+                                echo ' <script>
+                            $(function() {
+                                Swal.fire({
+                                    showCancelButton: true,
+                                    showConfirmButton: false,
+                                    cancelButtonText: "ปิด",
+                                    title: "เพิ่มบอร์ดสำเร็จ !",
+                                    text: "กรุณารอสักครู่ !",
+                                    icon: "success"
+                                });
+                            });
+                            </script>';
+                            header ( 'refresh: 2; url = index.php ' );
                                 } else{
                                     echo ' <script>
                                     $(function() {
@@ -66,7 +79,7 @@
                             }
                         }else{
                              // Add board without Images
-                            $sql2 = 'INSERT INTO board (boardHeader,boardBody,userID,categoryID,boardDate,boardTime) VALUES 
+                            $sql2 = 'INSERT INTO board (boardHeader,boardBody,userID,catego ryID,boardDate,boardTime) VALUES 
                             ("'.$_POST['boardHeader'].'",
                             "'.$_POST['boardBody'].'",
                             '.$_SESSION['userID'].',

@@ -41,51 +41,41 @@
                             });
                         });
                     </script>';
-                    }else{
-                        if($_FILES["boardImage"]["tmp_name"]!=''){
+                    // Update with Image
+                    }else if($_FILES["boardImage"]["tmp_name"]!=''){
                             
-                            // if(is_uploaded_file($_FILES['imgStat']['tmp_name'])){
-                            //     if(($_FILES['imgStat']['type']=='image/jpeg') OR
-                            //        ($_FILES['imgStat']['type']=='image/jpeg')){
-                            //    move_uploaded_file($_FILES['imgStat']['tmp_name'],
-                            //            'img/stat_img/'.$_FILES['imgStat']['name']);
-                            //    $SQL = 'INSERT INTO statuses (o_id,stat_text,stat_img,stat_date,f_id)'
-                            //            . ' VALUES ("'.$_SESSION['user_id'].'","'.$txt.'",'
-                            //            . ' "img/stat_img/'.$_FILES['imgStat']['name'].'","'.$stat_date.'","'.$_SESSION['user_id'].'" ) ';
-                            //     } 
-                            // }else{
-                            //     $SQL = 'INSERT INTO statuses (o_id,stat_text,stat_date,f_id)'
-                            //             . ' VALUES ("'.$_SESSION['user_id'].'","'.$txt.'","'.$stat_date.'","'.$_SESSION['user_id'].'") ';
-                            // }
-                        }else{
-                            if($_POST['categoryID'] != $board['categoryID']) {
-                            $updateBoardSQL = 'UPDATE board SET boardHeader = ?,
-                            boardBody = ? , categoryID = ? WHERE boardID = ? ';
-                            $prepareUpdateBoard =  $GLOBALS['conn']->prepare($updateBoardSQL);
-                            $prepareUpdateBoard->bind_param("ssii",$boardHeader,$boardBody,$categoryID,$boardID);
-                            $prepareUpdateBoard->execute();
-                            //echo $updateBoardSQL;
-                            // $result2 = mysqli_query($GLOBALS['conn'],$updateBoardSQL);
-                            echo ' <script>
-                            $(function() {
-                                Swal.fire({
-                                    showCancelButton: true,
-                                    showConfirmButton: false,
-                                    cancelButtonText: "ปิด",
-                                    title: "แก้ไขบอร์ดสำเร็จ !",
-                                    text: "กรุณารอสักครู่ !",
-                                    icon: "success"
-                                });
-                            });
-                            </script>';
-                           header ( 'refresh: 2; url = index.php ' );
-                            }else{
-                                
-
+                            $boardImage = $_FILES['boardImage']['name'];
+                            if(is_uploaded_file($_FILES['boardImage']['tmp_name'])){
+                                if(($_FILES['boardImage']['type']=='image/jpeg') ||
+                                   ($_FILES['boardImage']['type']=='image/png')){
+                                    move_uploaded_file($_FILES['boardImage']['tmp_name'],
+                                    'img/boardImg/'.$_FILES['boardImage']['name']);
                                     $updateBoardSQL = 'UPDATE board SET boardHeader = ?,
-                                    boardBody = ?  WHERE boardID = ? ';
+                                    boardBody = ? , categoryID = ? , boardImage = ? WHERE boardID = ? ';
                                     $prepareUpdateBoard =  $GLOBALS['conn']->prepare($updateBoardSQL);
-                                    $prepareUpdateBoard->bind_param("ssi",$boardHeader,$boardBody,$boardID);
+                                    $prepareUpdateBoard->bind_param("ssisi",$boardHeader,$boardBody,$categoryID,$boardImage,$boardID);
+                                    $prepareUpdateBoard->execute();
+                                            echo ' <script>
+                                        $(function() {
+                                            Swal.fire({
+                                                showCancelButton: true,
+                                                showConfirmButton: false,
+                                                cancelButtonText: "ปิด",
+                                                title: "แก้ไขบอร์ดสำเร็จ !",
+                                                text: "กรุณารอสักครู่ !",
+                                                icon: "success"
+                                            });
+                                        });
+                                        </script>';
+                                        header ( 'refresh: 2; url = index.php ' );
+                                         } 
+                                    } 
+                                 
+                        }else{
+                                    $updateBoardSQL = 'UPDATE board SET boardHeader = ?,
+                                    boardBody = ? , categoryID = ? WHERE boardID = ? ';
+                                    $prepareUpdateBoard =  $GLOBALS['conn']->prepare($updateBoardSQL);
+                                    $prepareUpdateBoard->bind_param("ssii",$boardHeader,$boardBody,$categoryID,$boardID);
                                     $prepareUpdateBoard->execute();
                                     echo ' <script>
                                     $(function() {
@@ -100,16 +90,16 @@
                                     });
                                     </script>';
                                     $_SESSION['edit'] = true;
-                                if($_GET['admin']!=1){
+                                if(@$_GET['admin']!=1){
                                    header ( 'refresh: 2; url = index.php ' );
                                 } else{
                                     header ( 'refresh: 2; url = adminBoard.php ' );
                                 }
                             }
                         }
-                    }
-            }
-
+                    
+            
+        
 
     ?>
 </head>
