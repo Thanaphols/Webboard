@@ -22,7 +22,7 @@
                     header( "refresh:0; url=boardDetail.php?boardID= $boardID" );
                  }
                  // Gete commentDetail Data
-                 $commentSQL = 'SELECT * FROM comment WHERE commentID = ? AND userID = ? ' ;
+                 $commentSQL = 'SELECT comment.*,users.firstName,users.lastName  FROM comment JOIN users ON comment.userID = users.userID WHERE commentID = ? AND userID = ? ' ;
                  $preparecommentSQL = $GLOBALS['conn']->prepare($commentSQL);
                  $preparecommentSQL->bind_param("ii",$commentID,$userID);
                  $preparecommentSQL->execute();
@@ -83,10 +83,12 @@
             <div class="col-lg-4">
                 <div class="card border-light  shadow-lg ">
                     <div class="card-body">
-                        <h5 class="card-title text-center ">แก้ไขคอมเม้น</h5>
+                        <h5 class="card-title text-center ">แก้ไขคอมเม้นหมายเลข <?php echo $data['commentID'] ?></h5>
                         <p class="card-text form-inline">
                             <div class="mb-3 row">
-                            <label for="editcommentDetail" class="col-sm-3  col-form-label text-while">คอมเม้นของคุณ</label>
+                            <label for="editcommentDetail" class="col-sm-3  col-form-label text-while">
+                                คอมเม้นของคุณ <?php echo $data['firstName'] ?>
+                            </label>
                             <input type="text"  class="form-control" name="editcommentDetail" id="editcommentDetail"  
                             value="<?php echo $data['commentDetail']; ?>">
                             <button type="submit" class="btn btn-success mt-2 mb-2" >แก้ไข</button>

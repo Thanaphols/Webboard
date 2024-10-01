@@ -59,13 +59,19 @@ connect();
         <div class="row">
             <div class="col-sm-2"></div>
             <div class="col-sm-8">
-                <h5 class="text-center"> <?php if($_GET['categoryID']==1) {    ?>
-                    หมวดหมู่ บันเทิง
-                    <?php } else if ($_GET['categoryID']==2){  ?>
-                        หมวดหมู่ สุขภาพ
-                    <?php }else{ ?>
-                        หมวดหมู่ Sport
-                   <?php  }   ?>
+                <h5 class="text-center"> 
+                    <!-- Get Category Name -->
+                <?php 
+                $categoryID = $_GET['categoryID'];
+                $ceNamesql = 'SELECT categoryName FROM category WHERE categoryID =  ? ';
+                $prepareceNamesql = $GLOBALS['conn']->prepare($ceNamesql);
+                $prepareceNamesql->bind_param("i",$categoryID);
+                $prepareceNamesql->execute();
+                $categoryNameResult = $prepareceNamesql->get_result();
+                $categoryName = $categoryNameResult->fetch_assoc();
+                $prepareceNamesql->close();
+                echo $categoryName['categoryName'];
+                   ?>
                 </h5>
                 <form method="post" >
                 <div class="row">
@@ -73,13 +79,12 @@ connect();
                     <div class="col-sm-3">
 
                     <a href="boardCategory.php?categoryID=<?php echo $cate['categoryID'] ?>" class="text-decoration-none text-dark" name="category<?php echo $cate['categoryID'] ?>"  > 
-                    <div class="card">
+                            <div class="card">
                                 <div class="card-body">
                                     <h5 class="card-title"></h5>
                                     <p class="card-text text-center"><?php echo $cate['categoryName'] ?></p>
                                 </div>
                             </div>
-
                     </a>
                     </div>
                     <?php } ?>
@@ -96,14 +101,12 @@ connect();
             <div class="col-sm-2"></div>
             <div class="col-sm-8 ">
                 <div class="row ">
-                    <!-- แก้ตรงนี้ -->
                     <?php $i=0; 
                         if($boardResult->num_rows > 0 ) {
                         while ( $data = mysqli_fetch_assoc($boardResult) ) { 
                         $userID =  $data['userID'];
                         $commnet = countROW('comment','boardID',$data['boardID']);
                         ?>
-                        <!-- ตรงนี้ -->
                     <div class="col-sm-6 border shadow-sm mb-2">
                     <?php if($data['boardImage']!=null) { ?>
                         <div class="row">
@@ -229,12 +232,10 @@ connect();
                                             </div>
                                         </div>
                                         </div>
-                                        <!-- แก้ตรงนี้  เพิ่ม ปีกกา และ row เพื่อแสดงว่าไม่มีข้อมูล -->
                      <?php } } else { ?>
                                 <div class="col-sm-12 text-center"><h5>ไม่พบข้อมูล</></div>
                             </div>
                         <?php } ?>
-                            <!-- ตรงนี้ -->
                 </div> 
             </div>
             <div class="col-lg-2"></div> 
