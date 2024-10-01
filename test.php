@@ -10,7 +10,11 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.10/dist/sweetalert2.all.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.5/css/responsive.dataTables.min.css">
     <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.2.5/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+
 
     <title>Webboard</title>
     <?php 
@@ -28,7 +32,7 @@
                 showConfirmButton: false,
                 cancelButtonText: "ปิด",
                 title: "ลบสมาชิกสำเร็จ",
-                text: "!",
+                text: "",
                 icon: "success"
             });
         });
@@ -42,33 +46,33 @@
   
     <?php require 'req/navbar.php' ?>
     <div class="container-fluid  mt-3 mb-2">
-    <div class="row">
+      <div class="row mt-2 mb-2">
+        <div class="col-sm-4"></div>
         <div class="col-sm-4">
-            
+          <ul class="nav nav-tabs">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="adminboard.php">ข้อมูลสมาชิก</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-dark" href="adminboard.php">ข้อมูลบอร์ด</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-dark" href="adminComment.php">ข้อมูลคอมเม้น</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-dark " href="adminCategory.php" tabindex="-1" aria-disabled="true">ข้อมูลหมวดหมู่</a>
+            </li>
+          </ul>
         </div>
-        <div class="col-sm-4 text-center"><h5>ข้อมูลสมาชิก </h5>
-    </div>
-        <div class="col-sm-4 text-end"></div>
-    </div>
+      </div>
+      <div class="row">
+          <div class="col-sm-4"> </div>
+          <div class="col-sm-4 text-center"><h5>ข้อมูลสมาชิก </h5></div>
+          <div class="col-sm-4 text-end"></div>
+      </div>
         <div class="row  mt-2 mb-2">
-            <div class="col-sm-2">
-            <div class="row mt-2 ">
-              <div class="col-sm-1"></div>
-              <div class="col-sm-10">
-              <a href = "adminUser.php"class=" text-decoration-none text-dark mt-2"><h5>ข้อมูลสมาชิก</h5></a>
-              <div class="border"></div>
-              <a href = "adminboard.php"class=" text-decoration-none text-dark mt-2"><h5>ข้อมูลบอร์ด</h5></a>
-              <div class="border"></div>
-              <a href = "adminComment.php"class=" text-decoration-none text-dark mt-2"><h5>ข้อมูลคอมเม้น</h5></a>
-              <div class="border"></div>
-              <a href = "adminCategory.php"class=" text-decoration-none text-dark mt-2"><h5>ข้อมูลหมวดหมู่</h5></a>
-              <div class="border"></div>
-              </div>
-                        
-            </div>
-            </div>
-           <div class="col-sm-10">
-           <table id="userTable"class="table table-striped table-hover">
+           <div class="col-sm-12">
+           <table id="userTable" class="display responsive nowrap" style="width:100%">
                     <thead>
                       <tr>
                         <th scope="col" >ไอดีสมาชิก</th>
@@ -114,14 +118,30 @@
                             <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
                             </svg>
                           </a>
-                          <a href="adminManageUser.php?userID=<?php echo $user['userID']; ?>&d=1" class="btn btn-sm  btn-danger">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                          <button   type="button" data-bs-toggle="modal" data-bs-target="#deuser<?php echo $user['userID'] ?>" class="btn btn-sm btn-danger ">                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
                               <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
                               <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
                             </svg>
-                          </a>
+                        </button>
                       </td>
-                      
+                      <!-- Modal Board Delete Comment -->
+                      <div class="modal fade" id="deuser<?php echo $user['userID'] ?>" tabindex="-1" aria-labelledby="commnetLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                  <h5 class="modal-title" id="deuserLabel">คุณต้องการลบสมาชิกหมายเลข <?php echo $user['userID'] ?> หรือไม่</h5>
+                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body">
+                                    <span classs="card-text " >คุณแน่ใจ </span> 
+                              </div>
+                              <div class="modal-footer">
+                                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+                                  <a href="adminManageUser.php?userID=<?php echo $user['userID']; ?>&d=1"  class="btn btn-danger">ลบ</a>
+                              </div>
+                            </div>
+                        </div>
+                      </div>
                     <?php  } ?>
                     <?php } else { ?>
                      
@@ -130,19 +150,15 @@
                  </tbody>
                   </table>
            </div>
-        </div>
-        <div class="row text-center">
-            <div class="col-sm-4 "></div>
-            <div class="col-sm-4">
-                <!-- <a href="#" class=" text-decoration-none btn-sm btn-primary disable">แสดงบอร์ดทั้งหมด</a> -->
-            </div>
-            <div class="col-sm-4"></div>
-        </div>
+      </div>  
     </div>
+                    
     <script>
         $(document).ready( function () {
-    $('#userTable').DataTable(); // เปิดใช้งาน DataTables
-} );
+          $('#userTable').DataTable({
+            responsive: true
+          }); 
+        } );
     </script>
 </body>
 </html>

@@ -10,7 +10,10 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.10/dist/sweetalert2.all.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.5/css/responsive.dataTables.min.css">
     <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.2.5/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
     <title>Webboard</title>
     <?php 
       require 'db/db_connect.php';
@@ -39,32 +42,36 @@
   
     <?php require 'req/navbar.php' ?>
     <div class="container-fluid  mt-3 mb-2">
+    <div class="row mt-2 mb-2">
+          <div class="col-sm-4"></div>
+          <div class="col-sm-6">
+          <ul class="nav nav-tabs">
+            <li class="nav-item">
+              <a class="nav-link  text-dark " aria-current="page" href="adminUser.php" >ข้อมูลสมาชิก</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="adminboard.php">ข้อมูลบอร์ด</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-dark" href="adminComment.php">ข้อมูลคอมเม้น</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-dark " href="adminCategory.php" tabindex="-1" aria-disabled="true">ข้อมูลหมวดหมู่</a>
+            </li>
+          </ul>
+          </div>
+        </div>
     <div class="row">
         <div class="col-sm-4">
-            
         </div>
         <div class="col-sm-4 text-center"><h5>ข้อมูลบอร์ด </h5>
     </div>
         <div class="col-sm-4 text-end"></div>
     </div>
         <div class="row  mt-2 mb-2">
-            <div class="col-sm-2">
-            <div class="row mt-2 ">
-              <div class="col-sm-1"></div>
-              <div class="col-sm-10">
-              <a href = "adminUser.php"class=" text-decoration-none text-dark mt-2"><h5>ข้อมูลสมาชิก</h5></a>
-              <div class="border"></div>
-              <a href = "adminboard.php"class=" text-decoration-none text-dark mt-2"><h5>ข้อมูลบอร์ด</h5></a>
-              <div class="border"></div>
-              <a href = "adminComment.php"class=" text-decoration-none text-dark mt-2"><h5>ข้อมูลคอมเม้น</h5></a>
-              <div class="border"></div>
-              <a href = "adminCategory.php"class=" text-decoration-none text-dark mt-2"><h5>ข้อมูลหมวดหมู่</h5></a>
-              <div class="border"></div>
-              </div>  
-            </div>
-            </div>
+        <div class="col-sm-1"> </div>
            <div class="col-sm-10">
-           <table id="boardTable" class="table">
+           <table id="boardTable" class="display responsive nowrap">
                     <thead>
                       <tr>
                         <th scope="col" >ไอดี</th>
@@ -139,18 +146,15 @@
                     
                   </table>
            </div>
+           <div class="col-sm-1"> </div>
         </div>
-        <div class="row text-center">
-            <div class="col-sm-4 "></div>
-            <div class="col-sm-4">
-                <!-- <a href="#" class=" text-decoration-none btn-sm btn-primary disable">แสดงบอร์ดทั้งหมด</a> -->
-            </div>
-            <div class="col-sm-4"></div>
-        </div>
+       
     </div>
     <script>
         $(document).ready( function () {
-          $('#boardTable').DataTable(); // เปิดใช้งาน DataTables
+          $('#boardTable').DataTable({
+            responsive: true
+          }); // เปิดใช้งาน DataTables
         } );
     </script>
 </body>
