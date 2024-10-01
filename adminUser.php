@@ -101,8 +101,10 @@
                         <td><?php echo $user['email']; ?></td>
                         <td><?php echo $user['userPassword']; ?></td>
                         <td>
-                          <?php $date=date_create($user['userDate']);
-                                echo date_format($date,"d/m/Y"); ?>
+                          <?php if($user['userDate']!=null) {
+                           $date=date_create($user['userDate']);
+                                echo date_format($date,"d/m/Y");  }?>
+                                
                         </td>
                         <td><?php echo $user['userTime']; ?></td>
                         <td>

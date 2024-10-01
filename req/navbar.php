@@ -24,6 +24,13 @@
           <a class="nav-link active" aria-current="page" href="index.php">หน้าแรก</a>
         </li> -->
         <?php if(isset($_SESSION['userID'])) { ?>
+          <!-- search --> 
+           <li class="nav-item">
+          <form action="search.php" method="POST" class="d-flex ">
+        <input class="form-control me-2" type="search" id="search" name="search" placeholder="Search" aria-label="Search">
+        <button class="btn btn-success" type="submit">ค้นหา</button>
+      </form>
+      </li>
         <li class="nav-item">
           <a class="nav-link active" aria-current="page" href="addboard.php">โพสต์บอด</a>
         </li>
@@ -56,19 +63,7 @@
           </ul>
           
         </li>
-        <li class="nav-item">
-          <a href="#" role="button" class="nav-link active   position-relative " aria-expanded="false">
-           
-            <svg svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bell" viewBox="0 0 16 16">
-            <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2M8 1.918l-.797.161A4 4 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4 4 0 0 0-3.203-3.92zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5 5 0 0 1 13 6c0 .88.32 4.2 1.22 6"/>
-            </svg>
-            การแจ้งเตือน
-            <span class=" position-absolute top-1 start-100 translate-middle badge rounded-pill bg-danger">
-              0
-            <span class="visually-hidden">unread messages</span>
-            </span>
-          </a>
-        </li>
+        
         <?php } ?>
         <li class="nav-item justify-content-end">
             <?php if(!isset($_SESSION['userID'])) { ?>

@@ -22,7 +22,7 @@
                 $deleteSQL = 'DELETE FROM users WHERE userID = ? ';
                 $preapredeleteSQL = $GLOBALS['conn']->prepare($deleteSQL);
                 $preapredeleteSQL->bind_param("i",$_GET['userID']);
-                $preapredeleteSQL->execute();
+               $preapredeleteSQL->execute();
                 $_SESSION['delete'] = true;
                 $preapredeleteSQL->close();
                 header('refresh:0;url=adminUser.php');
@@ -134,7 +134,7 @@
     ?>
 </head>
 <body>
-    <?php require 'req/navbar.php';  
+    <?php require 'req/navbar.php';  if(@$_GET['d'] != 1) {
     $userDataID = $_GET['userID'];
     $userSQL = 'SELECT * FROM users WHERE userID = ? ';
     $preapreuserSQL = $GLOBALS['conn']->prepare($userSQL);
@@ -143,7 +143,6 @@
     $result = $preapreuserSQL->get_result();
     $user = $result->fetch_assoc();
     $preapreuserSQL->close();
-    //print_r($user);
      ?>
     <div class="container-fluid mt-5 mb-2">
     <form method="post">
@@ -206,5 +205,6 @@
             </form>
         </div>
     </div>
+    <?php } ?>
     </body>
 </html>
