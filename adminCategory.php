@@ -9,6 +9,8 @@
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.10/dist/sweetalert2.all.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
+    <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
     <title>Webboard</title>
     <?php 
       require 'db/db_connect.php';
@@ -60,11 +62,10 @@
               <a href = "adminCategory.php"class=" text-decoration-none text-dark mt-2"><h5>ข้อมูลหมวดหมู่</h5></a>
               <div class="border"></div>
               </div>
-                        
             </div>
             </div>
-           <div class="col-sm-8">
-           <table class="table">
+           <div class="col-sm-10">
+           <table id="categoryTable" class="table">
                     <thead>
                       <tr>
                         <th scope="col" >ไอดีหมวดหมู่</th>
@@ -72,13 +73,15 @@
                         <th scope="col"></th>
                       </tr>
                     </thead>
+                   
+                    <tbody>
                     <?php  
                         $catersql = 'SELECT * FROM category';
                         $result = mysqli_query($GLOBALS['conn'],$catersql);
+                        if($result->num_rows > 0) {
                          while($category = mysqli_fetch_assoc($result) ) {
                           
                     ?>  
-                    <tbody>
                       <tr>
                         <th scope="row"><?php echo $category['categoryID']; ?></th>
                         <td><?php echo $category['categoryName']; ?></td>
@@ -97,6 +100,9 @@
                           </button>
                       </td>
                       </tr>
+                      <?php  } } else { ?>
+                        <tr><td>ไม่พบข้อมูล</td></tr>
+                        <?php } ?>
                     </tbody>
                      <!-- Modal Board Delete Comment -->
                                       <div class="modal fade" id="deboard<?php echo $category['categoryID'] ?>" tabindex="-1" aria-labelledby="commnetLabel" aria-hidden="true">
@@ -117,17 +123,16 @@
                                             </div>
                                         </div>
                                         </div>
-                    <?php  } ?>
+                    
                   </table>
            </div>
         </div>
-        <div class="row text-center">
-            <div class="col-sm-4 "></div>
-            <div class="col-sm-4">
-                <!-- <a href="#" class=" text-decoration-none btn-sm btn-primary disable">แสดงบอร์ดทั้งหมด</a> -->
-            </div>
-            <div class="col-sm-4"></div>
-        </div>
+        
     </div>
+    <script>
+        $(document).ready( function () {
+          $('#categoryTable').DataTable(); // เปิดใช้งาน DataTables
+        } );
+    </script>
 </body>
 </html>

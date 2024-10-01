@@ -96,11 +96,14 @@ connect();
             <div class="col-sm-2"></div>
             <div class="col-sm-8 ">
                 <div class="row ">
-                    <?php $i=0; while ( $data = mysqli_fetch_assoc($boardResult) ) { 
+                    <!-- แก้ตรงนี้ -->
+                    <?php $i=0; 
+                        if($boardResult->num_rows > 0 ) {
+                        while ( $data = mysqli_fetch_assoc($boardResult) ) { 
                         $userID =  $data['userID'];
                         $commnet = countROW('comment','boardID',$data['boardID']);
-                        //echo $commnet;
                         ?>
+                        <!-- ตรงนี้ -->
                     <div class="col-sm-6 border shadow-sm mb-2">
                     <?php if($data['boardImage']!=null) { ?>
                         <div class="row">
@@ -226,7 +229,15 @@ connect();
                                             </div>
                                         </div>
                                         </div>
-                     <?php } ?>
+                                        <!-- แก้ตรงนี้  เพิ่ม ปีกกา และ row เพื่อแสดงว่าไม่มีข้อมูล -->
+                     <?php } } else { ?>
+                            <div class="row">
+                                <div class="col-sm-4"></div>
+                                <div class="col-sm-4 text-center"><h5>ไม่พบข้อมูล</></div>
+                                <div class="col-sm-4"></div>
+                            </div>
+                        <?php } ?>
+                            <!-- ตรงนี้ -->
                 </div> 
             </div>
             <div class="col-lg-2"></div> 

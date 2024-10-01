@@ -9,6 +9,8 @@
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.10/dist/sweetalert2.all.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
+    <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
     <title>Webboard</title>
     <?php 
       require 'db/db_connect.php';
@@ -48,7 +50,7 @@
             </div>
             </div>
            <div class="col-sm-10">
-           <table class="table">
+           <table id="commentTable" class="table">
                     <thead>
                       <tr>
                         <th scope="col" >หมายเลขคอมเม้น</th>
@@ -60,14 +62,13 @@
                         <th scope="col"></th>
                       </tr>
                     </thead>
+                    <tbody>
                     <?php  
-                      $start = 0;
-                        // $boardsql = 'SELECT * FROM comment LIMIT '.$start.' , 2';
                         $boardsql = 'SELECT * FROM comment ';
                         $result = mysqli_query($GLOBALS['conn'],$boardsql);
+                        if($result->num_rows > 0) {
                          while($comment = mysqli_fetch_assoc($result) ) {
                     ?>  
-                    <tbody>
                       <tr>
                         <th scope="row"><?php echo $comment['commentID']; ?></th>
                         <td><?php echo $comment['boardID']; ?></td>
@@ -97,28 +98,21 @@
                           </a>
                       </td>
                       </tr>
+                      <?php  } } else { ?>
+                        <tr><td> ไม่พบข้อมูล </td></tr>
+                        <?php } ?>
                     </tbody>
-                    <?php  } ?>
+                   
                   </table>
-                  <nav aria-label="Page navigation example text-dark">
-                    <ul class="pagination">
-                      <li class="page-item"><a class="page-link text-dark" href="#">Previous</a></li>
-                      <li class="page-item"><a class="page-link text-dark" href="#">1</a></li>
-                      <li class="page-item"><a class="page-link text-dark" href="#">2</a></li>
-                      <li class="page-item"><a class="page-link text-dark" href="#">3</a></li>
-                      <li class="page-item"><a class="page-link text-dark" href="#">Next</a></li>
-                    </ul>
-                </nav>  
+                  
            </div>
-        </div>
-        <div class="row text-center">
-            <div class="col-sm-4 "></div>
-            <div class="col-sm-4">
-                <!-- <a href="#" class=" text-decoration-none btn-sm btn-primary disable">แสดงบอร์ดทั้งหมด</a> -->
-            </div>
-            <div class="col-sm-4"></div>
         </div>
         
     </div>
+    <script>
+        $(document).ready( function () {
+          $('#commentTable').DataTable(); // เปิดใช้งาน DataTables
+        } );
+    </script>
 </body>
 </html>

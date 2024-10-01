@@ -9,6 +9,8 @@
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.10/dist/sweetalert2.all.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
+    <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
     <title>Webboard</title>
     <?php 
       require 'db/db_connect.php';
@@ -58,16 +60,15 @@
               <div class="border"></div>
               <a href = "adminCategory.php"class=" text-decoration-none text-dark mt-2"><h5>ข้อมูลหมวดหมู่</h5></a>
               <div class="border"></div>
-              </div>
-                        
+              </div>  
             </div>
             </div>
            <div class="col-sm-10">
-           <table class="table">
+           <table id="boardTable" class="table">
                     <thead>
                       <tr>
-                        <th scope="col" >หมายเลขบอร์ด</th>
-                        <th scope="col">หัวข้อ</th>
+                        <th scope="col" >ไอดี</th>
+                        <th scope="col" width="200px">หัวข้อ</th>
                         <th scope="col" >เนื้อหา</th>
                         <th scope="col">ไอดีสมาชิก</th>
                         <th scope="col">หมวดหมู่</th>
@@ -76,12 +77,13 @@
                         <th scope="col"></th>
                       </tr>
                     </thead>
+                    <tbody>
                     <?php  
                         $boardsql = 'SELECT * , category.categoryName FROM board JOIN category ON category.categoryID = board.categoryID ';
                         $result = mysqli_query($GLOBALS['conn'],$boardsql);
+                        if($result->num_rows > 0) {
                          while($board = mysqli_fetch_assoc($result) ) {
                     ?>  
-                    <tbody>
                       <tr>
                         <th scope="row"><?php echo $board['boardID']; ?></th>
                         <td><?php echo $board['boardHeader']; ?></td>
@@ -112,27 +114,29 @@
                           </button>
                       </td>
                       </tr>
+                      <!-- Modal Board Delete Comment -->
+                      <div class="modal fade" id="deboard<?php echo $board['boardID'] ?>" tabindex="-1" aria-labelledby="commnetLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                  <h5 class="modal-title" id="deboardLabel">คุณต้องการลบบอร์ดหมายเลข <?php echo $board['boardID'] ?></h5>
+                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body">
+                                    <span classs="card-text " >คุณแน่ใจ </span> 
+                              </div>
+                              <div class="modal-footer">
+                                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+                                  <a href="deleteBoard.php?userID=<?php echo $board['userID'] ?>&boardID=<?php echo $board['boardID'] ?>&admin=1"  class="btn btn-danger">ลบ</a>
+                              </div>
+                            </div>
+                        </div>
+                      </div>
+                      <?php }} else { ?>
+                        <tr><td>ไม่พบข้อมูล</td></tr>
+                        <?php  } ?>
                     </tbody>
-                    <!-- Modal Board Delete Comment -->
-                    <div class="modal fade" id="deboard<?php echo $board['boardID'] ?>" tabindex="-1" aria-labelledby="commnetLabel" aria-hidden="true">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="deboardLabel">คุณต้องการลบบอร์ด <?php echo $board['boardID'] ?></h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                        <span classs="card-text " >คุณแน่ใจ </span> 
-                                                        
-                                                    </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
-                                                    <a href="deleteBoard.php?userID=<?php echo $board['userID'] ?>&boardID=<?php echo $board['boardID'] ?>&admin=1"  class="btn btn-danger">ลบ</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        </div>
-                    <?php  } ?>
+                    
                   </table>
            </div>
         </div>
@@ -144,5 +148,10 @@
             <div class="col-sm-4"></div>
         </div>
     </div>
+    <script>
+        $(document).ready( function () {
+          $('#boardTable').DataTable(); // เปิดใช้งาน DataTables
+        } );
+    </script>
 </body>
 </html>
