@@ -15,22 +15,28 @@
     
     if($_POST['search']==''){
         $search = '';
+        $count = 0;
     }else{
-        $text =   $_POST['search'];
-        $search =  ' WHERE board.boardHeader LIKE "'.$text.'%" || category.categoryName LIKE "'.$text.'%"
-        || users.email  LIKE "'.$text.'%"  || users.firstName LIKE "'.$text.'%" OR users.lastName LIKE "'.$text.'%" 
-        ';
+        $text =   $_POST['search'].'%';
+        $search =  ' WHERE board.boardHeader LIKE ? || category.categoryName LIKE ?
+        || users.email  LIKE  ?  || users.firstName LIKE  ? OR users.lastName LIKE ? ';
         $board['img']='';
-        $getBoardsql = 'SELECT users.userID, users.firstName , users.lastName ,
+        $SearchSQL = 'SELECT users.userID, users.firstName , users.lastName ,
         board.boardID, board.boardHeader, board.boardBody ,board.boardImage , board.boardDate, board.boardTime ,
         category.categoryName 
         FROM board INNER JOIN users ON users.userID = board.userID 
         INNER JOIN category ON category.categoryID = board.categoryID  
         '.$search.'
         ORDER BY board.boardDate DESC , board.boardTime DESC ';
-        $boardResult = mysqli_query($GLOBALS['conn'],$getBoardsql);
-        $categorySQL =  'SELECT *FROM category ';
+        $prepareSearchSQL  = $GLOBALS['conn']->prepare($SearchSQL);
+        $prepareSearchSQL->bind_param("sssss",$text,$text,$text,$text,$text);
+        $prepareSearchSQL->execute();
+        $boardResult = $prepareSearchSQL->get_result();
+        $prepareSearchSQL->close();
+        $categorySQL =  'SELECT * FROM category ';
         $category = mysqli_query($GLOBALS['conn'],$categorySQL);
+        $count = $boardResult->num_rows; 
+        
     }
     
     
@@ -38,7 +44,8 @@
 ?>
 </head>
 <body>
-    <?php require 'req/navbar.php' ?>
+    <?php require 'req/navbar.php';  
+     ?>
     <div class="container-fluid  mt-3 mb-2">
         
     <div class="row">
@@ -47,7 +54,7 @@
     </div>
         <div class="col-sm-4 text-end"></div>
     </div>
-        <?php if( $search!='') { ?>
+        <?php  if( $search !='' && $count != 0  ) { ?>
         <div class="row  mt-2 mb-2">
             <div class="col-sm-2"></div>
             <div class="col-sm-8 ">
