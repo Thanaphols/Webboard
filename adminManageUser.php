@@ -19,12 +19,28 @@
             }else if(empty($_GET)) {
                 header('refresh:0;url=adminUser.php');
             }else if (@$_GET['d']==1){ 
-                $deleteSQL = 'DELETE FROM users WHERE userID = ? ';
-                $preapredeleteSQL = $GLOBALS['conn']->prepare($deleteSQL);
-                $preapredeleteSQL->bind_param("i",$_GET['userID']);
-               $preapredeleteSQL->execute();
+                // Delete Comment
+                $deleteCommentSQL = 'DELETE  FROM comment 
+                WHERE userID = ?';
+                $preapredeleteCommentSQL = $GLOBALS['conn']->prepare($deleteCommentSQL);
+                $preapredeleteCommentSQL->bind_param("i",$_GET['userID']);
+                $preapredeleteCommentSQL->execute();
+                $preapredeleteCommentSQL->close();
+                // Delete Board
+                $deleteBoardSQL = 'DELETE  FROM board 
+                WHERE userID = ?';
+                $preapredeleteBoardSQL = $GLOBALS['conn']->prepare($deleteBoardSQL);
+                $preapredeleteBoardSQL->bind_param("i",$_GET['userID']);
+                $preapredeleteBoardSQL->execute();
+                $preapredeleteBoardSQL->close();
+                // Delete Users
+                $deleteUserSQL = 'DELETE  FROM users 
+                WHERE userID = ?';
+                $preapredeleteUserSQL = $GLOBALS['conn']->prepare($deleteUserSQL);
+                $preapredeleteUserSQL->bind_param("i",$_GET['userID']);
+                $preapredeleteUserSQL->execute();
+                $preapredeleteUserSQL->close();
                 $_SESSION['delete'] = true;
-                $preapredeleteSQL->close();
                 header('refresh:0;url=adminUser.php');
             }else{
                 $userID = $_GET['userID'];

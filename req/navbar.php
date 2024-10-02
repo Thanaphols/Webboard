@@ -20,17 +20,15 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-        <!-- <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="index.php">หน้าแรก</a>
-        </li> -->
-        <?php if(isset($_SESSION['userID'])) { ?>
-          <!-- search --> 
-           <li class="nav-item">
+        <!-- search --> 
+        <li class="nav-item ">
           <form action="search.php" method="POST" class="d-flex ">
-        <input class="form-control me-2" type="search" id="search" name="search" placeholder="Search" aria-label="Search">
-        <button class="btn btn-success" type="submit">ค้นหา</button>
-      </form>
-      </li>
+            <input class="form-control me-2" type="search" id="search" name="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-success" type="submit">ค้นหา</button>
+          </form>
+        </li>
+        <?php if(isset($_SESSION['userID'])) { ?>
+         
         <li class="nav-item">
           <a class="nav-link active" aria-current="page" href="addboard.php">โพสต์บอด</a>
         </li>

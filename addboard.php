@@ -79,7 +79,7 @@
                             }
                         }else{
                              // Add board without Images
-                            $sql2 = 'INSERT INTO board (boardHeader,boardBody,userID,catego ryID,boardDate,boardTime) VALUES 
+                            $sql2 = 'INSERT INTO board (boardHeader,boardBody,userID,categoryID,boardDate,boardTime) VALUES 
                             ("'.$_POST['boardHeader'].'",
                             "'.$_POST['boardBody'].'",
                             '.$_SESSION['userID'].',
